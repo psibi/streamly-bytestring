@@ -1,0 +1,64 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.1.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 38c6160b124672857268a4b2f74b94b1bc315d448be817edb439ea6fc0af9326
+
+name:           streamly-bytestring
+version:        0.1.0.0
+synopsis:       Library for producing fake data
+description:    Please see the README on GitHub at <https://github.com/psibi/fakedata#readme>
+category:       Streamly, Stream
+homepage:       https://github.com/psibi/streamly-bytestring#readme
+bug-reports:    https://github.com/psibi/streamly-bytestring/issues
+author:         Sibi Prabakaran
+maintainer:     sibi@psibi.in
+copyright:      Sibi Prabakaran
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/psibi/streamly-bytestring
+
+library
+  exposed-modules:
+      Streamly.ByteString
+      Streamly.ByteString.Lazy
+  other-modules:
+      Paths_streamly_bytestring
+  hs-source-dirs:
+      src
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
+    , exceptions
+    , streamly
+  default-language: Haskell2010
+
+test-suite sb-test
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_streamly_bytestring
+  hs-source-dirs:
+      test
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
+    , directory
+    , exceptions
+    , filepath
+    , hspec
+    , hspec-discover
+    , quickcheck-instances
+    , streamly
+    , streamly-bytestring
+  default-language: Haskell2010

@@ -1,0 +1,52 @@
+name:                streamly-bytestring
+version:             0.1.0.0
+github:              "psibi/streamly-bytestring"
+license:             BSD3
+author:              "Sibi Prabakaran"
+maintainer:          "sibi@psibi.in"
+copyright:           "Sibi Prabakaran"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+data-files:
+- faker/lib/locales/*yml
+- faker/lib/locales/en/*yml
+- customFakeSource/en/*yml
+
+# Metadata used when publishing your package
+synopsis:            Library for producing fake data
+category:            Streamly, Stream
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/psibi/fakedata#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- streamly
+- bytestring
+- exceptions
+
+library:
+  source-dirs: src
+
+tests:
+  sb-test:
+    main:                Main.hs
+    source-dirs:         test
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - streamly-bytestring
+    - streamly
+    - hspec
+    - hspec-discover
+    - bytestring
+    - directory
+    - filepath
+    - quickcheck-instances
