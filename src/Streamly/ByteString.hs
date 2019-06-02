@@ -5,15 +5,14 @@
 
 module Streamly.ByteString where
 
-import Control.Monad (liftM2)
-import Control.Monad.Catch
 import Control.Monad.IO.Class
 import Data.ByteString hiding (length)
+import qualified Data.ByteString as BS
 import Data.ByteString.Unsafe
 import Data.Word (Word8)
 import Foreign.ForeignPtr
 import Foreign.ForeignPtr.Unsafe
-import Foreign.Ptr (minusPtr)
+import Foreign.Ptr (castPtr, minusPtr, plusPtr)
 import Prelude hiding (length)
 import Streamly
 import Streamly.Mem.Array
@@ -39,3 +38,19 @@ arrayToByteString Array {..} =
     aLen =
       let p = unsafeForeignPtrToPtr aStart
        in aEnd `minusPtr` p
+
+byteStringToArray :: (MonadIO m) => ByteString -> m (Array Word8)
+byteStringToArray bs =
+  liftIO $
+  unsafeUseAsCStringLen
+    bs
+    (\(ptr, _) -> do
+       let endPtr pr = (castPtr pr `plusPtr` (BS.length bs))
+       fptr <- newForeignPtr_ (castPtr ptr)
+       return $ Array {aStart = fptr, aEnd = endPtr ptr, aBound = endPtr ptr})
+
+fromByteString ::
+     forall m. (MonadIO m)
+  => ByteString
+  -> m (Array Word8)
+fromByteString bs = byteStringToArray bs
