@@ -15,7 +15,7 @@ import Foreign.ForeignPtr.Unsafe
 import Foreign.Ptr (castPtr, minusPtr, plusPtr)
 import Prelude hiding (length)
 import Streamly
-import Streamly.Mem.Array
+import Streamly.Internal.Memory.Array.Types
 import qualified Streamly.Prelude as S
 
 toByteString ::

@@ -8,15 +8,9 @@ copyright:           "Sibi Prabakaran"
 
 extra-source-files:
 - README.md
-- ChangeLog.md
-
-data-files:
-- faker/lib/locales/*yml
-- faker/lib/locales/en/*yml
-- customFakeSource/en/*yml
 
 # Metadata used when publishing your package
-synopsis:            Library for producing fake data
+synopsis:            Library for easy interaction with streamly and bytestring
 category:            Streamly, Stream
 
 # To avoid duplicated efforts in documentation and dealing with the
@@ -25,7 +19,7 @@ category:            Streamly, Stream
 description:         Please see the README on GitHub at <https://github.com/psibi/fakedata#readme>
 
 dependencies:
-- base >= 4.7 && < 5
+- base       >= 4.7 && < 5
 - streamly
 - bytestring
 - exceptions

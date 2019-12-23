@@ -4,11 +4,11 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 38c6160b124672857268a4b2f74b94b1bc315d448be817edb439ea6fc0af9326
+-- hash: 243142db0c3a2985f63b761b460c96d43da8c4b541a2cd087ddb89f7985ef103
 
 name:           streamly-bytestring
 version:        0.1.0.0
-synopsis:       Library for producing fake data
+synopsis:       Library for easy interaction with streamly and bytestring
 description:    Please see the README on GitHub at <https://github.com/psibi/fakedata#readme>
 category:       Streamly, Stream
 homepage:       https://github.com/psibi/streamly-bytestring#readme
@@ -21,7 +21,6 @@ license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
     README.md
-    ChangeLog.md
 
 source-repository head
   type: git
