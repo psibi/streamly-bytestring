@@ -16,8 +16,8 @@ import System.IO (openFile, IOMode(ReadMode))
 import Test.QuickCheck.Instances.ByteString
 
 import qualified Data.ByteString as BS
-import qualified Streamly.ByteString as Strict
-import qualified Streamly.ByteString.Lazy as Lazy
+import qualified Streamly.Conversion.ByteString as Strict
+import qualified Streamly.Conversion.ByteString.Lazy as Lazy
 import qualified Streamly.Prelude as S
 
 streamToByteString :: MonadAsync m => SerialT m (Array Word8)-> m ByteString

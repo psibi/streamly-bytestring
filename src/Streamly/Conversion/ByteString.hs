@@ -1,9 +1,6 @@
-{-# LANGUAGE RankNTypes #-}
-{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE ScopedTypeVariables #-}
 
-module Streamly.ByteString where
+module Streamly.Conversion.ByteString where
 
 import Data.ByteString.Internal (ByteString(..))
 import Data.Word (Word8)
@@ -27,4 +24,3 @@ toArray (PS fp off len) = Array nfp endPtr endPtr
   where
     nfp = fp `plusForeignPtr` off
     endPtr = unsafeForeignPtrToPtr fp `plusPtr` len
-
