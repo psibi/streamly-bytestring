@@ -4,12 +4,12 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: d7b723b2c145d87015c11a929d92a55125356427ca187fcc84931d5a645bc90c
+-- hash: 0f3455c1500cb1e7136d05020e4f38a05a4ea5cdc1eaec2c675fa57797b4cb5f
 
 name:           streamly-bytestring
 version:        0.1.0.0
-synopsis:       Library for easy interaction with streamly and bytestring
-description:    Please see the README on GitHub at <https://github.com/psibi/fakedata#readme>
+synopsis:       Library for streamly and bytestring interoperation.
+description:    Please see the README on GitHub at <https://github.com/psibi/streamly-bytestring#readme>
 category:       Streamly, Stream
 homepage:       https://github.com/psibi/streamly-bytestring#readme
 bug-reports:    https://github.com/psibi/streamly-bytestring/issues
@@ -38,7 +38,7 @@ library
       base >=4.7 && <5
     , bytestring
     , exceptions
-    , streamly
+    , streamly >=0.6.0
   default-language: Haskell2010
 
 test-suite sb-test
@@ -60,4 +60,5 @@ test-suite sb-test
     , quickcheck-instances
     , streamly
     , streamly-bytestring
+    , temporary
   default-language: Haskell2010

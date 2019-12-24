@@ -44,3 +44,4 @@ tests:
     - directory
     - filepath
     - quickcheck-instances
+    - temporary
