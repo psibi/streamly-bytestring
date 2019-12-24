@@ -10,17 +10,17 @@ extra-source-files:
 - README.md
 
 # Metadata used when publishing your package
-synopsis:            Library for easy interaction with streamly and bytestring
+synopsis:            Library for streamly and bytestring interoperation. 
 category:            Streamly, Stream
 
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
 # common to point users to the README.md file.
-description:         Please see the README on GitHub at <https://github.com/psibi/fakedata#readme>
+description:         Please see the README on GitHub at <https://github.com/psibi/streamly-bytestring#readme>
 
 dependencies:
 - base       >= 4.7 && < 5
-- streamly
+- streamly   >= 0.6.0
 - bytestring
 - exceptions
 
