@@ -1,5 +1,5 @@
 name:                streamly-bytestring
-version:             0.1.0.0
+version:             0.2.0.0
 github:              "psibi/streamly-bytestring"
 license:             BSD3
 author:              "Sibi Prabakaran"
@@ -8,10 +8,11 @@ copyright:           "Sibi Prabakaran"
 
 extra-source-files:
 - README.md
+- Changelog.md
 
 # Metadata used when publishing your package
 synopsis:            Library for streamly and bytestring interoperation. 
-category:            Streamly, Stream
+category:            Streamly, Stream, ByteString
 
 # To avoid duplicated efforts in documentation and dealing with the
 # complications of embedding Haddock markup inside cabal files, it is
@@ -20,9 +21,10 @@ description:         Please see the README on GitHub at <https://github.com/psib
 
 dependencies:
 - base       >= 4.7 && < 5
-- streamly   >= 0.6.0
-- bytestring
-- exceptions
+  # Should have an exact version match as we are depending on Internal modules.
+  # Currently compatable with streamly HEAD on GitHub.
+- streamly
+- bytestring >= 0.10.0 && < 0.11
 
 library:
   source-dirs: src
@@ -45,3 +47,17 @@ tests:
     - filepath
     - quickcheck-instances
     - temporary
+
+benchmarks:
+  sb-benchmark:
+    main:                Main.hs
+    source-dirs:         benchmark
+    ghc-options:
+    - -threaded
+    - -O2
+    dependencies:
+    - streamly-bytestring
+    - streamly
+    - gauge
+    - bytestring
+    - deepseq

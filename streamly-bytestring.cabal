@@ -4,13 +4,13 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: dc33fd818160443fc1f863a6d2f972aa011eef8516e5b93dda0ffc3e4f02cdd0
+-- hash: 5718790dd4ec4eb5ccde2d53ec9ceaad0add93b17b6882d89bcdccf6d7b178e7
 
 name:           streamly-bytestring
-version:        0.1.0.0
+version:        0.2.0.0
 synopsis:       Library for streamly and bytestring interoperation.
 description:    Please see the README on GitHub at <https://github.com/psibi/streamly-bytestring#readme>
-category:       Streamly, Stream
+category:       Streamly, Stream, ByteString
 homepage:       https://github.com/psibi/streamly-bytestring#readme
 bug-reports:    https://github.com/psibi/streamly-bytestring/issues
 author:         Sibi Prabakaran
@@ -21,6 +21,7 @@ license-file:   LICENSE
 build-type:     Simple
 extra-source-files:
     README.md
+    Changelog.md
 
 source-repository head
   type: git
@@ -36,9 +37,8 @@ library
       src
   build-depends:
       base >=4.7 && <5
-    , bytestring
-    , exceptions
-    , streamly >=0.6.0
+    , bytestring >=0.10.0 && <0.11
+    , streamly >=0.7.0 && <0.8
   default-language: Haskell2010
 
 test-suite sb-test
@@ -53,7 +53,6 @@ test-suite sb-test
       base >=4.7 && <5
     , bytestring
     , directory
-    , exceptions
     , filepath
     , hspec
     , hspec-discover
@@ -61,4 +60,21 @@ test-suite sb-test
     , streamly
     , streamly-bytestring
     , temporary
+  default-language: Haskell2010
+
+benchmark sb-benchmark
+  type: exitcode-stdio-1.0
+  main-is: Main.hs
+  other-modules:
+      Paths_streamly_bytestring
+  hs-source-dirs:
+      benchmark
+  ghc-options: -threaded -O2
+  build-depends:
+      base >=4.7 && <5
+    , bytestring
+    , deepseq
+    , gauge
+    , streamly
+    , streamly-bytestring
   default-language: Haskell2010
