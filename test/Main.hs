@@ -17,8 +17,8 @@ import Test.Hspec.QuickCheck
 import Test.QuickCheck.Instances.ByteString
 
 import qualified Data.ByteString as BS
-import qualified Streamly.Memory.ByteString as Strict
-import qualified Streamly.Memory.ByteString.Lazy as Lazy
+import qualified Streamly.External.ByteString as Strict
+import qualified Streamly.External.ByteString.Lazy as Lazy
 import qualified Streamly.Prelude as S
 
 streamToByteString :: MonadAsync m => SerialT m (Array Word8)-> m ByteString

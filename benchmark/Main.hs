@@ -1,7 +1,7 @@
 module Main where
 
 import Streamly
-import Streamly.Memory.ByteString.Lazy
+import Streamly.External.ByteString.Lazy
 import Control.DeepSeq (rnf)
 
 import qualified Streamly.Prelude as S

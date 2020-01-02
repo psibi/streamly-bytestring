@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5718790dd4ec4eb5ccde2d53ec9ceaad0add93b17b6882d89bcdccf6d7b178e7
+-- hash: df74ad70cfd83f03acb0f311d5bbc1e485b5ce506142604fe1a909a6f3fb8fb9
 
 name:           streamly-bytestring
 version:        0.2.0.0
@@ -29,8 +29,8 @@ source-repository head
 
 library
   exposed-modules:
-      Streamly.Memory.ByteString
-      Streamly.Memory.ByteString.Lazy
+      Streamly.External.ByteString
+      Streamly.External.ByteString.Lazy
   other-modules:
       Paths_streamly_bytestring
   hs-source-dirs:
@@ -38,7 +38,7 @@ library
   build-depends:
       base >=4.7 && <5
     , bytestring >=0.10.0 && <0.11
-    , streamly >=0.7.0 && <0.8
+    , streamly
   default-language: Haskell2010
 
 test-suite sb-test

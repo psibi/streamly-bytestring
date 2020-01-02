@@ -1,6 +1,6 @@
 {-# LANGUAGE RecordWildCards #-}
 
-module Streamly.Memory.ByteString where
+module Streamly.External.ByteString where
 
 import Data.ByteString.Internal (ByteString(..))
 import Data.Word (Word8)

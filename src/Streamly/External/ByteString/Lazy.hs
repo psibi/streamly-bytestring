@@ -1,8 +1,8 @@
-module Streamly.Memory.ByteString.Lazy where
+module Streamly.External.ByteString.Lazy where
 
 import Data.ByteString.Lazy.Internal (ByteString(..), foldlChunks)
 import Data.Word (Word8)
-import Streamly.Memory.ByteString as Strict
+import Streamly.External.ByteString as Strict
 import Streamly.Internal.Memory.Array.Types (Array(..))
 import Streamly
 
