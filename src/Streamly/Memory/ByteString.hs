@@ -11,6 +11,7 @@ import Streamly.Internal.Memory.Array.Types (Array(..))
 
 import qualified Streamly.Prelude as S
 
+{-# INLINE fromArray #-}
 fromArray :: Array Word8 -> ByteString
 fromArray Array {..}
   | aLen == 0 = mempty
@@ -19,6 +20,7 @@ fromArray Array {..}
     aStartPtr = unsafeForeignPtrToPtr aStart
     aLen = aEnd `minusPtr` aStartPtr
 
+{-# INLINE toArray #-}
 toArray :: ByteString -> Array Word8
 toArray (PS fp off len) = Array nfp endPtr endPtr
   where

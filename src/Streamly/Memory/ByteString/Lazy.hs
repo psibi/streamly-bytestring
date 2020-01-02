@@ -9,9 +9,11 @@ import Streamly
 import qualified Streamly.Prelude as S
 import qualified Streamly.Internal.Data.Stream.StreamD as D
 
+{-# INLINE fromArrayStream #-}
 fromArrayStream :: Monad m => SerialT m (Array Word8) -> m ByteString
 fromArrayStream = S.foldl' (flip Chunk) Empty . S.map Strict.fromArray
 
+{-# INLINE toArrayStream #-}
 toArrayStream :: Monad m => ByteString -> SerialT m (Array Word8)
 toArrayStream = D.fromStreamD . foldlChunks stepFunction D.nil
   where
