@@ -38,7 +38,8 @@ packages:
 # using the same syntax as the packages field.
 # (e.g., acme-missiles-0.3)
 extra-deps:
-- ../streamly
+- git: https://github.com/composewell/streamly
+  commit: 83cbe5d14cc8c383aa7f2975743742a0bc16e35e
 
 # Override default flag values for local packages and extra-deps
 # flags: {}
