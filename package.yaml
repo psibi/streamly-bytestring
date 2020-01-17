@@ -23,7 +23,7 @@ dependencies:
 - base       >= 4.7 && < 5
   # Should have an exact version match as we are depending on Internal modules.
   # Currently compatable with streamly HEAD on GitHub.
-- streamly
+- streamly   >= 0.7.0  && < 0.8
 - bytestring >= 0.10.0 && < 0.11
 
 library:

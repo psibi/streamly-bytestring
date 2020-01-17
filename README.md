@@ -1,12 +1,10 @@
 # streamly-bytestring
 
-Package for ease of interaction with `ByteString` (Strict and Lazy) and
-`Streamly`.
+Library for streamly and bytestring interoperation.
 
 *TODO:*
 
-* [ ] Update README
-* [ ] Add comments describing the functions in the modules
+* [X] Add comments describing the functions in the modules
 * [ ] Improve tests
 
 
