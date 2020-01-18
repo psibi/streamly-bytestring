@@ -28,12 +28,15 @@ dependencies:
 
 library:
   source-dirs: src
+  ghc-options:
+  - -Wall
 
 tests:
   sb-test:
     main:                Main.hs
     source-dirs:         test
     ghc-options:
+    - -Wall
     - -threaded
     - -rtsopts
     - -with-rtsopts=-N
@@ -53,6 +56,7 @@ benchmarks:
     main:                Main.hs
     source-dirs:         benchmark
     ghc-options:
+    - -Wall
     - -threaded
     - -O2
     dependencies:

@@ -8,10 +8,8 @@ import Data.ByteString.Internal (ByteString(..))
 import Data.Word (Word8)
 import Foreign.ForeignPtr (plusForeignPtr)
 import Foreign.ForeignPtr.Unsafe (unsafeForeignPtrToPtr)
-import GHC.Ptr (castPtr, minusPtr, plusPtr, Ptr(..))
+import GHC.Ptr (minusPtr, plusPtr)
 import Streamly.Internal.Memory.Array.Types (Array(..))
-
-import qualified Streamly.Prelude as S
 
 -- Convert an array of 'Word8' to a 'ByteString'. This function unwraps the
 -- 'Array' and wraps it with 'ByteString' constructors and hence the operation
