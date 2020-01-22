@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 0d747b6e521b1bcc91d77caf673c75ca4b7d999f2b8ea0d56f0067b54aba8418
+-- hash: 4419c11070ecfc38017356b41e1452f4105e04da529d1a558ef35aa0f90b3991
 
 name:           streamly-bytestring
 version:        0.2.0.0
@@ -58,6 +58,7 @@ test-suite sb-test
     , hspec
     , hspec-discover
     , quickcheck-instances
+    , random
     , streamly
     , streamly-bytestring
     , temporary
@@ -76,6 +77,7 @@ benchmark sb-benchmark
     , bytestring
     , deepseq
     , gauge
+    , random
     , streamly
     , streamly-bytestring
   default-language: Haskell2010

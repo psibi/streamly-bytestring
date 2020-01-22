@@ -50,6 +50,7 @@ tests:
     - filepath
     - quickcheck-instances
     - temporary
+    - random
 
 benchmarks:
   sb-benchmark:
@@ -65,3 +66,4 @@ benchmarks:
     - gauge
     - bytestring
     - deepseq
+    - random
