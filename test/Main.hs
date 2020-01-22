@@ -45,12 +45,6 @@ propFoldTestStrict bl =
   bl' <- fmap BS.unpack $ S.fold Strict.write $ S.fromList bl
   bl' `shouldBe` bl
 
-propFoldTestLazy :: [Word8] -> Spec
-propFoldTestLazy bl =
-  prop ("Lazy: fold write . fromList = pack" ++ " -- Size: " ++ show (length bl) ++ " bytes") $ do
-  bl' <- fmap BSL.unpack $ S.fold Lazy.write $ S.fromList bl
-  bl' `shouldBe` bl
-
 propUnfoldTestStrict :: [Word8] -> Spec
 propUnfoldTestStrict bl =
   prop ("Strict: toList . unfold read . pack = id" ++ " -- Size: " ++ show (length bl) ++ " bytes") $ do
@@ -71,17 +65,16 @@ main =
         mapM_ (flip withSystemTempFile checkFileContent . show) ([1..100] :: [Int])
       prop "Strict Identity" $ \bs ->
         bs `shouldBe` Strict.fromArray (Strict.toArray bs)
+      prop "Lazy Identity" $ \bs -> do
+        bs2 <- Lazy.fromArrayStream . Lazy.toArrayStream $ bs
+        bs `shouldBe` bs2
     wl0 <- runIO $ word8List 0
-    wlM <- runIO $ word8List 900    
+    wlM <- runIO $ word8List 900
     wlL <- runIO $ word8List 73700
-    describe "Strict: Fold tests" $ do      
+    describe "Strict: Fold tests" $ do
       propFoldTestStrict wl0
       propFoldTestStrict wlM
       propFoldTestStrict wlL
-    describe "Lazy: Fold tests" $ do      
-      propFoldTestLazy wl0
-      propFoldTestLazy wlM
-      propFoldTestLazy wlL
     describe "Strict: Unfold tests" $ do
       propUnfoldTestStrict wl0
       propUnfoldTestStrict wlM
@@ -90,7 +83,3 @@ main =
       propUnfoldTestLazy wl0
       propUnfoldTestLazy wlM
       propUnfoldTestLazy wlL
-
-        
-
-

@@ -1,7 +1,11 @@
 {-# LANGUAGE RecordWildCards #-}
 
 module Streamly.External.ByteString
-  (fromArray, toArray, write, read)
+  ( fromArray
+  , toArray
+  , write
+  , read
+  )
 where
 
 import Control.Monad.IO.Class (MonadIO)
@@ -19,7 +23,7 @@ import qualified Streamly.Internal.Memory.Array as A
 
 import Prelude hiding (read)
 
--- Convert an array of 'Word8' to a 'ByteString'. This function unwraps the
+-- | Convert an array of 'Word8' to a 'ByteString'. This function unwraps the
 -- 'Array' and wraps it with 'ByteString' constructors and hence the operation
 -- is performed in constant time.
 {-# INLINE fromArray #-}
@@ -31,9 +35,9 @@ fromArray Array {..}
     aStartPtr = unsafeForeignPtrToPtr aStart
     aLen = aEnd `minusPtr` aStartPtr
 
--- Convert a 'ByteString' to an array of 'Word8'. This function unwraps the
+-- | Convert a 'ByteString' to an array of 'Word8'. This function unwraps the
 -- 'ByteString' and wraps it with 'Array' constructors and hence the operation
--- is performed in constant time. 
+-- is performed in constant time.
 {-# INLINE toArray #-}
 toArray :: ByteString -> Array Word8
 toArray (PS fp off len) = Array nfp endPtr endPtr
@@ -41,13 +45,17 @@ toArray (PS fp off len) = Array nfp endPtr endPtr
     nfp = fp `plusForeignPtr` off
     endPtr = unsafeForeignPtrToPtr fp `plusPtr` len
 
--- XXX Use writeN here?
--- Fold a stream of Word8 to a strict ByteString of appropriate size.
+-- | Fold a stream of Word8 to a strict ByteString of appropriate size.
 {-# INLINE write #-}
 write :: MonadIO m => Fold m Word8 ByteString
 write = fromArray <$> A.write
 
--- Unfold a strict ByteString to a stream of Word8.
+-- | Fold a stream of Word8 to a strict ByteString of appropriate size.
+{-# INLINE writeN #-}
+writeN :: MonadIO m => Int -> Fold m Word8 ByteString
+writeN i = fromArray <$> (A.writeN i)
+
+-- | Unfold a strict ByteString to a stream of Word8.
 {-# INLINE read #-}
 read :: Monad m => Unfold m ByteString Word8
 read = lmap toArray A.read

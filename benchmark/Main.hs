@@ -16,6 +16,9 @@ import Gauge
 numElements :: Int
 numElements = 100000
 
+numChunks :: Int
+numChunks = 100000
+
 {-# INLINE benchIO #-}
 benchIO :: NFData b => String -> (Int -> IO a) -> (a -> b) -> Benchmark
 benchIO name src f = bench name $ nfIO $
@@ -26,26 +29,25 @@ benchIO' :: NFData b => String -> (Int -> IO a) -> (a -> IO b) -> Benchmark
 benchIO' name src f = bench name $ nfIO $
     randomRIO (1,1) >>= src >>= f
 
+{-# INLINE fromArrayStream #-}
+fromArrayStream :: Monad m => Int -> m BSL.ByteString
+fromArrayStream n = Lazy.fromArrayStream
+                    $ S.map Strict.toArray
+                    $ S.map BS.singleton
+                    $ S.map fromIntegral
+                    $ S.map (\x -> x `mod` 256)
+                    $ S.enumerateFromTo n (n + numChunks)
+
+{-# INLINE toArrayStream #-}
+toArrayStream :: Monad m => BSL.ByteString -> m ()
+toArrayStream = S.drain . Lazy.toArrayStream
+
 {-# INLINE strictWrite #-}
 strictWrite :: MonadIO m => Int -> m BS.ByteString
 strictWrite n = S.fold Strict.write
                 $ S.map fromIntegral
                 $ S.map (\x -> x `mod` 256)
                 $ S.enumerateFromTo n (n + numElements)
-
-{-# INLINE lazyWrite #-}
-lazyWrite :: MonadIO m => Int -> m BSL.ByteString
-lazyWrite n = S.fold Lazy.write 
-              $ S.map fromIntegral
-              $ S.map (\x -> x `mod` 256)
-              $ S.enumerateFromTo n (n + numElements)
-
-{-# INLINE lazyWrite' #-}
-lazyWrite' :: MonadIO m => Int -> Int -> m BSL.ByteString
-lazyWrite' chunkSize n = S.fold (Lazy.write' chunkSize)
-              $ S.map fromIntegral
-              $ S.map (\x -> x `mod` 256)
-              $ S.enumerateFromTo n (n + numElements)
 
 {-# INLINE strictRead #-}
 strictRead :: MonadIO m => BS.ByteString -> m ()
@@ -59,10 +61,7 @@ main :: IO ()
 main = defaultMain
         [ benchIO "Strict Write" strictWrite id
         , benchIO' "Strict Read" strictWrite strictRead
-        , benchIO "Lazy Write" lazyWrite id
-        , benchIO' "Lazy Read" lazyWrite lazyRead        
-        , benchIO "Lazy Write with chunk size as 1" (lazyWrite' 1) id
-        , benchIO' "Lazy Read with chunk size as 1" (lazyWrite' 1) lazyRead        
+        , benchIO' "Lazy Read" fromArrayStream lazyRead
+        , benchIO "fromArrayStream" fromArrayStream id
+        , benchIO' "toArrayStream" fromArrayStream toArrayStream
         ]
-
-
