@@ -2,8 +2,8 @@
 
 module Streamly.External.ByteString.Lazy
   ( read
-  , fromArrayStream
-  , toArrayStream
+  , fromChunks
+  , toChunks
   )
 where
 
@@ -15,6 +15,7 @@ import Streamly.Internal.Data.Unfold (concat)
 import Streamly.Internal.Data.Unfold.Types (Unfold(..))
 
 import qualified Streamly.External.ByteString as Strict
+import qualified Streamly.Internal.Memory.Array as A
 
 import Streamly
 import qualified Streamly.Prelude as S
@@ -24,25 +25,25 @@ import qualified Data.ByteString.Lazy.Internal as BSLI
 import Prelude hiding (concat, read)
 
 -- | Convert a serial stream of 'Array' 'Word8' to a lazy 'ByteString'.
-{-# INLINE fromArrayStream #-}
-fromArrayStream :: Monad m => SerialT m (Array Word8) -> m ByteString
-fromArrayStream = S.foldr BSLI.chunk Empty . S.map Strict.fromArray
+{-# INLINE fromChunks #-}
+fromChunks :: Monad m => SerialT m (Array Word8) -> m ByteString
+fromChunks = S.foldr BSLI.chunk Empty . S.map Strict.fromArray
 
 -- | Convert a lazy 'ByteString' to a serial stream of 'Array' 'Word8'.
-{-# INLINE toArrayStream #-}
-toArrayStream :: Monad m => ByteString -> SerialT m (Array Word8)
-toArrayStream = S.unfold unf
-  where
-    unf = Unfold step seed
+{-# INLINE toChunks #-}
+toChunks :: Monad m => ByteString -> SerialT m (Array Word8)
+toChunks = S.unfold readChunks
+
+-- | Unfold a lazy ByteString to a stream of 'Array' 'Words'.
+{-# INLINE  readChunks #-}
+readChunks :: Monad m => Unfold m ByteString (Array Word8)
+readChunks = Unfold step seed
+    where
     seed = return
     step (Chunk bs bl) = return $ Yield (Strict.toArray bs) bl
     step Empty = return $ Stop
 
--- | Unfold a lazy Bytestring to a stream of Word8
+-- | Unfold a lazy ByteString to a stream of Word8
 {-# INLINE read #-}
 read :: Monad m => Unfold m ByteString Word8
-read = concat (Unfold step inject) Strict.read
-  where
-    inject = return
-    step (Chunk h t) = return $ Yield h t
-    step Empty = return $ Stop
+read = concat readChunks A.read

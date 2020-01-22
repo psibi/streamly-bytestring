@@ -58,7 +58,6 @@ benchmarks:
     source-dirs:         benchmark
     ghc-options:
     - -Wall
-    - -threaded
     - -O2
     dependencies:
     - streamly-bytestring

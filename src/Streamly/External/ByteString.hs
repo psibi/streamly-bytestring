@@ -30,11 +30,11 @@ import Prelude hiding (read)
 {-# INLINE fromArray #-}
 fromArray :: Array Word8 -> ByteString
 fromArray Array {..}
-  | aLen == 0 = mempty
-  | otherwise = PS aStart 0 aLen
-  where
-    aStartPtr = unsafeForeignPtrToPtr aStart
-    aLen = aEnd `minusPtr` aStartPtr
+    | aLen == 0 = mempty
+    | otherwise = PS aStart 0 aLen
+        where
+        aStartPtr = unsafeForeignPtrToPtr aStart
+        aLen = aEnd `minusPtr` aStartPtr
 
 -- | Convert a 'ByteString' to an array of 'Word8'. This function unwraps the
 -- 'ByteString' and wraps it with 'Array' constructors and hence the operation
@@ -42,7 +42,7 @@ fromArray Array {..}
 {-# INLINE toArray #-}
 toArray :: ByteString -> Array Word8
 toArray (PS fp off len) = Array nfp endPtr endPtr
-  where
+    where
     nfp = fp `plusForeignPtr` off
     endPtr = unsafeForeignPtrToPtr fp `plusPtr` len
 

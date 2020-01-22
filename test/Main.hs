@@ -72,7 +72,7 @@ main =
       prop "Strict Identity" $ \bs ->
         bs `shouldBe` Strict.fromArray (Strict.toArray bs)
       prop "Lazy Identity" $ \bs -> do
-        bs2 <- Lazy.fromArrayStream . Lazy.toArrayStream $ bs
+        bs2 <- Lazy.fromChunks . Lazy.toChunks $ bs
         bs `shouldBe` bs2
     wl0 <- runIO $ word8List 0
     wlM <- runIO $ word8List 900

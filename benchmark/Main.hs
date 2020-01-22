@@ -29,32 +29,35 @@ benchIO' :: NFData b => String -> (Int -> IO a) -> (a -> IO b) -> Benchmark
 benchIO' name src f = bench name $ nfIO $
     randomRIO (1,1) >>= src >>= f
 
-{-# INLINE fromArrayStream #-}
-fromArrayStream :: Monad m => Int -> m BSL.ByteString
-fromArrayStream n = Lazy.fromArrayStream
-                    $ S.map Strict.toArray
-                    $ S.map BS.singleton
-                    $ S.map fromIntegral
-                    $ S.map (\x -> x `mod` 256)
-                    $ S.enumerateFromTo n (n + numChunks)
+{-# INLINE fromChunks #-}
+fromChunks :: Monad m => Int -> m BSL.ByteString
+fromChunks n =
+    Lazy.fromChunks
+  $ S.map Strict.toArray
+  $ S.map BS.singleton
+  $ S.map fromIntegral
+  $ S.map (\x -> x `mod` 256)
+  $ S.enumerateFromTo n (n + numChunks)
 
-{-# INLINE toArrayStream #-}
-toArrayStream :: Monad m => BSL.ByteString -> m ()
-toArrayStream = S.drain . Lazy.toArrayStream
+{-# INLINE toChunks #-}
+toChunks :: Monad m => BSL.ByteString -> m ()
+toChunks = S.drain . Lazy.toChunks
 
 {-# INLINE strictWrite #-}
 strictWrite :: MonadIO m => Int -> m BS.ByteString
-strictWrite n = S.fold Strict.write
-                $ S.map fromIntegral
-                $ S.map (\x -> x `mod` 256)
-                $ S.enumerateFromTo n (n + numElements)
+strictWrite n =
+    S.fold Strict.write
+  $ S.map fromIntegral
+  $ S.map (\x -> x `mod` 256)
+  $ S.enumerateFromTo n (n + numElements)
 
 {-# INLINE strictWriteN #-}
 strictWriteN :: MonadIO m => Int -> m BS.ByteString
-strictWriteN n = S.fold (Strict.writeN numElements)
-                 $ S.map fromIntegral
-                 $ S.map (\x -> x `mod` 256)
-                 $ S.enumerateFromTo n (n + numElements)
+strictWriteN n =
+    S.fold (Strict.writeN numElements)
+  $ S.map fromIntegral
+  $ S.map (\x -> x `mod` 256)
+  $ S.enumerateFromTo n (n + numElements)
 
 {-# INLINE strictRead #-}
 strictRead :: MonadIO m => BS.ByteString -> m ()
@@ -69,7 +72,7 @@ main = defaultMain
         [ benchIO "Strict Write" strictWrite id
         , benchIO "Strict WriteN" strictWriteN id
         , benchIO' "Strict Read" strictWrite strictRead
-        , benchIO' "Lazy Read" fromArrayStream lazyRead
-        , benchIO "fromArrayStream" fromArrayStream id
-        , benchIO' "toArrayStream" fromArrayStream toArrayStream
+        , benchIO' "Lazy Read" fromChunks lazyRead
+        , benchIO "fromChunks" fromChunks id
+        , benchIO' "toChunks" fromChunks toChunks
         ]
