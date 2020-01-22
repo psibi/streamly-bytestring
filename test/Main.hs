@@ -45,6 +45,12 @@ propFoldTestStrict bl =
   bl' <- fmap BS.unpack $ S.fold Strict.write $ S.fromList bl
   bl' `shouldBe` bl
 
+propNFoldTestStrict :: Int -> [Word8] -> Spec
+propNFoldTestStrict n bl =
+  prop ("Strict: fold (writeN n) . fromList = pack . take n" ++ " -- Size: " ++ show n ++ " bytes") $ do
+  bl' <- fmap BS.unpack $ S.fold (Strict.writeN n) $ S.fromList bl
+  bl' `shouldBe` take n bl
+
 propUnfoldTestStrict :: [Word8] -> Spec
 propUnfoldTestStrict bl =
   prop ("Strict: toList . unfold read . pack = id" ++ " -- Size: " ++ show (length bl) ++ " bytes") $ do
@@ -75,6 +81,10 @@ main =
       propFoldTestStrict wl0
       propFoldTestStrict wlM
       propFoldTestStrict wlL
+    describe "Strict: N Fold tests" $ do
+      propNFoldTestStrict 0 wl0
+      propNFoldTestStrict 900 wlM
+      propNFoldTestStrict 73700 wlL
     describe "Strict: Unfold tests" $ do
       propUnfoldTestStrict wl0
       propUnfoldTestStrict wlM

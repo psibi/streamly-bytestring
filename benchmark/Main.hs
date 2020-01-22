@@ -49,6 +49,13 @@ strictWrite n = S.fold Strict.write
                 $ S.map (\x -> x `mod` 256)
                 $ S.enumerateFromTo n (n + numElements)
 
+{-# INLINE strictWriteN #-}
+strictWriteN :: MonadIO m => Int -> m BS.ByteString
+strictWriteN n = S.fold (Strict.writeN numElements)
+                 $ S.map fromIntegral
+                 $ S.map (\x -> x `mod` 256)
+                 $ S.enumerateFromTo n (n + numElements)
+
 {-# INLINE strictRead #-}
 strictRead :: MonadIO m => BS.ByteString -> m ()
 strictRead = S.drain . S.unfold Strict.read
@@ -60,6 +67,7 @@ lazyRead = S.drain . S.unfold Lazy.read
 main :: IO ()
 main = defaultMain
         [ benchIO "Strict Write" strictWrite id
+        , benchIO "Strict WriteN" strictWriteN id
         , benchIO' "Strict Read" strictWrite strictRead
         , benchIO' "Lazy Read" fromArrayStream lazyRead
         , benchIO "fromArrayStream" fromArrayStream id

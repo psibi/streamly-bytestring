@@ -4,6 +4,7 @@ module Streamly.External.ByteString
   ( fromArray
   , toArray
   , write
+  , writeN
   , read
   )
 where
