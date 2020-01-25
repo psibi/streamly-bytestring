@@ -4,7 +4,7 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 5f5d21beb012410d386365f13bcdfdd69585a0c0021572becb374b7577b891c1
+-- hash: a905fe13f29d409f8faa63a7f3cb9bb337977bbc17c040e304969cba1c02a275
 
 name:           streamly-bytestring
 version:        0.1.0.0
@@ -35,7 +35,7 @@ library
       Paths_streamly_bytestring
   hs-source-dirs:
       src
-  ghc-options: -Wall
+  ghc-options: -Wall -O2
   build-depends:
       base >=4.7 && <5
     , bytestring >=0.10.0 && <0.11

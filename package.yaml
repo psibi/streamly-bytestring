@@ -30,6 +30,7 @@ library:
   source-dirs: src
   ghc-options:
   - -Wall
+  - -O2
 
 tests:
   sb-test:

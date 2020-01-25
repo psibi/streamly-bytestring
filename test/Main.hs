@@ -63,6 +63,11 @@ propUnfoldTestLazy bl =
   bl' <- S.toList (S.unfold Lazy.read (BSL.pack bl))
   bl' `shouldBe` bl
 
+testFromChunksLaziness :: Word8 -> IO Word8
+testFromChunksLaziness h = do
+  lbs <- Lazy.fromChunks $ S.fromList [Strict.toArray (BS.singleton h), undefined]
+  return $ BSL.head lbs
+
 main :: IO ()
 main =
   hspec $ do
@@ -93,3 +98,7 @@ main =
       propUnfoldTestLazy wl0
       propUnfoldTestLazy wlM
       propUnfoldTestLazy wlL
+    describe "Laziness of fromChunks" $ do
+      it "Should not fail" $ do
+        w <- testFromChunksLaziness 100
+        w `shouldBe` 100
