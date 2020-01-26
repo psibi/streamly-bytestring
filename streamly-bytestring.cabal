@@ -4,10 +4,10 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: b1e5310f72c02fdc553e1a4ce1ed98fba7aa1d66fe3da1142b86ac67248bef88
+-- hash: 025212f67560e558928440828becf41e3f1e28c9e66cb82ac3e415918168f8e3
 
 name:           streamly-bytestring
-version:        0.1.0.0
+version:        0.1.0.1
 synopsis:       Library for streamly and bytestring interoperation.
 description:    Please see the README on GitHub at <https://github.com/psibi/streamly-bytestring#readme>
 category:       Streamly, Stream, ByteString
