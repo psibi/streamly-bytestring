@@ -63,9 +63,23 @@ propUnfoldTestLazy bl =
   bl' <- S.toList (S.unfold Lazy.read (BSL.pack bl))
   bl' `shouldBe` bl
 
-testFromChunksLaziness :: Word8 -> IO Word8
-testFromChunksLaziness h = do
-  lbs <- Lazy.fromChunks $ S.fromList [Strict.toArray (BS.singleton h), undefined]
+propFromChunks :: Spec
+propFromChunks =
+  prop ("Lazy.fromChunks = BSL.fromChunks") $ \aL -> do
+  x1 <- Lazy.fromChunks $ S.map Strict.toArray $ S.fromList aL
+  let x2 = BSL.fromChunks aL
+  x1 `shouldBe` x2
+
+propFromChunksIO :: Spec
+propFromChunksIO =
+  prop ("Lazy.fromChunks = BSL.fromChunks") $ \aL -> do
+  x1 <- Lazy.fromChunksIO $ S.map Strict.toArray $ S.fromList aL
+  let x2 = BSL.fromChunks aL
+  x1 `shouldBe` x2
+
+testFromChunksIOLaziness :: Word8 -> IO Word8
+testFromChunksIOLaziness h = do
+  lbs <- Lazy.fromChunksIO $ S.fromList (Strict.toArray (BS.singleton h): undefined)
   return $ BSL.head lbs
 
 main :: IO ()
@@ -100,5 +114,7 @@ main =
       propUnfoldTestLazy wlL
     describe "Laziness of fromChunks" $ do
       it "Should not fail" $ do
-        w <- testFromChunksLaziness 100
+        w <- testFromChunksIOLaziness 100
         w `shouldBe` 100
+    describe "Correctness of fromChunks" propFromChunks
+    describe "Correctness of fromChunksIO" propFromChunksIO
