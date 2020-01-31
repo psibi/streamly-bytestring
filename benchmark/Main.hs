@@ -39,6 +39,16 @@ fromChunks n =
   $ S.map (\x -> x `mod` 256)
   $ S.enumerateFromTo n (n + numChunks)
 
+{-# INLINE fromChunksIO #-}
+fromChunksIO :: Int -> IO BSL.ByteString
+fromChunksIO n =
+    Lazy.fromChunksIO
+  $ S.map Strict.toArray
+  $ S.map BS.singleton
+  $ S.map fromIntegral
+  $ S.map (\x -> x `mod` 256)
+  $ S.enumerateFromTo n (n + numChunks)
+
 {-# INLINE toChunks #-}
 toChunks :: Monad m => BSL.ByteString -> m ()
 toChunks = S.drain . Lazy.toChunks
@@ -74,5 +84,6 @@ main = defaultMain
         , benchIO' "Strict Read" strictWrite strictRead
         , benchIO' "Lazy Read" fromChunks lazyRead
         , benchIO "fromChunks" fromChunks id
+        , benchIO "fromChunksIO" fromChunksIO id        
         , benchIO' "toChunks" fromChunks toChunks
         ]
