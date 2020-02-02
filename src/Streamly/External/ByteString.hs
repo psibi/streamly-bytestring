@@ -36,7 +36,7 @@ import Prelude hiding (read)
 {-# INLINE toArray #-}
 toArray :: ByteString -> Array Word8
 toArray (PS fp off len) = Array nfp endPtr endPtr
-    where
+  where
     nfp = fp `plusForeignPtr` off
     endPtr = unsafeForeignPtrToPtr fp `plusPtr` len
 
@@ -48,9 +48,9 @@ fromArray :: Array Word8 -> ByteString
 fromArray Array {..}
     | aLen == 0 = mempty
     | otherwise = PS aStart 0 aLen
-        where
-        aStartPtr = unsafeForeignPtrToPtr aStart
-        aLen = aEnd `minusPtr` aStartPtr
+  where
+    aStartPtr = unsafeForeignPtrToPtr aStart
+    aLen = aEnd `minusPtr` aStartPtr
 
 -- | Unfold a strict ByteString to a stream of Word8.
 {-# INLINE read #-}

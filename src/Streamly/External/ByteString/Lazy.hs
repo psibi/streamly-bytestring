@@ -3,7 +3,7 @@
 module Streamly.External.ByteString.Lazy
   ( readChunks
   , read
-  
+
   , toChunks
   , fromChunks
   , fromChunksIO
@@ -33,7 +33,7 @@ import Prelude hiding (concat, read)
 {-# INLINE  readChunks #-}
 readChunks :: Monad m => Unfold m ByteString (Array Word8)
 readChunks = Unfold step seed
-    where
+  where
     seed = return
     step (Chunk bs bl) = return $ Yield (Strict.toArray bs) bl
     step Empty = return $ Stop
@@ -60,43 +60,46 @@ instance Monad LazyIO where
 -}
 
 -- | Convert a serial stream of 'Array' 'Word8' to a lazy 'ByteString'.
--- 
--- As a consequence of using 'S.foldr' in the implementation the effects of
--- the stream are evaluated if the monad is strict. And hence, since IO is a
--- strict monad, this function does not work as expected when interacting with
--- the file API's (Eg. Functions from streamly:Streamly.FileSystem.Handle).
 --
--- In such cases we need to use a lazy version of IO.
--- One can define a lazy version of IO like so,
+-- IMPORTANT NOTE: This function is lazy only for lazy monads
+-- (e.g. Identity). For strict monads (e.g. /IO/) it consumes the entire input
+-- before generating the output. For /IO/ monad please use fromChunksIO
+-- instead.
+--
+-- For strict monads like /IO/ you could create a newtype wrapper to make the
+-- monad bind operation lazy and lift the stream to that type using hoist, then
+-- you can use this function to generate the bytestring lazily. For example you
+-- can wrap the /IO/ type to make the bind lazy like this:
+--
 -- @
 -- newtype LazyIO a = LazyIO { runLazy :: IO a } deriving (Functor, Applicative)
--- 
+--
 -- liftToLazy :: IO a -> LazyIO a
 -- liftToLazy = LazyIO
--- 
+--
 -- instance Monad LazyIO where
 --   return = pure
 --   LazyIO a >>= f = LazyIO (unsafeInterleaveIO a >>= unsafeInterleaveIO . runLazy . f)
 -- @
--- 
+--
 -- /fromChunks/ can then be used as,
 -- @
 -- {-# INLINE fromChunksIO #-}
 -- fromChunksIO :: SerialT IO (Array Word8) -> IO ByteString
 -- fromChunksIO str = runLazy (fromChunks (S.hoist liftToLazy str))
 -- @
---
--- We can compose /liftToLazy/ with /liftLazyToM/ (/liftLazyToM . liftToLazy/) to
--- lift the evaluation to the desired monad. Please note that the desired monad
--- here should be lazy in nature.
 {-# INLINE fromChunks #-}
 fromChunks :: Monad m => SerialT m (Array Word8) -> m ByteString
 fromChunks = S.foldr BSLI.chunk Empty . S.map Strict.fromArray
 
--- | Convert a serial stream of 'Array' 'Word8' to a lazy 'ByteString' in the /IO/
--- monad.
+-- | Convert a serial stream of 'Array' 'Word8' to a lazy 'ByteString' in the
+-- /IO/ monad.
 {-# INLINE fromChunksIO #-}
 fromChunksIO :: SerialT IO (Array Word8) -> IO ByteString
 fromChunksIO =
-    S.foldrM (\x b -> unsafeInterleaveIO b >>= pure . BSLI.chunk x) (pure BSLI.Empty)
-    . S.map Strict.fromArray
+-- Although the /IO/ monad is strict in nature we emulate laziness using
+-- 'unsafeInterleaveIO'.
+    S.foldrM
+        (\x b -> unsafeInterleaveIO b >>= pure . BSLI.chunk x)
+        (pure BSLI.Empty) .
+    S.map Strict.fromArray

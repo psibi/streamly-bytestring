@@ -2,102 +2,18 @@
 
 Library for streamly and bytestring interoperation.
 
-`Streamly.Memory.Array` is a generalization of `ByteString`.
-`Streamly.Memory.Array` used proper monadic programming instead
-of `unsafePerformIO`.
+If you are writing code from scratch, please use `Streamly.Memory.Array` which
+is a generalization of `ByteString` and better integrated with streamly.
 
-This library is for interoperation with legacy programs that
-already use `ByteString`. In case you are writing code from scratch,
-consider using `Streamly.Memory.Array`.
+This library is to enable interoperation of streamly with existing code that
+uses `ByteString`.
 
-## Description
+The package provides APIs to interconvert between strict `Bytestring` and
+streamly `Array Word8` and between lazy `Bytestring` and stream of `Array Word8`.
 
-This package provides the following modules:
-
-1. `Streamly.External.ByteString`
-2. `Streamly.External.ByteString.Lazy`
-
-### Strict ByteString
-
-`Streamly.External.ByteString` provides functions to for
-interoperation between streamly and strict bytestring.
-
-#### Direct conversions
-
-1. `fromArray`
-2. `toArray`
-
-These functions are used for efficient _O(1)_ conversion between
-streamly's pinned array type (`Streamly.Memory.Array`) and `ByteString`.
-
-#### Unfolds & Folds
-
-1. `read`
-2. `writeN`
-3. `write`
-
-These functions can be used with `unfold` and `fold` available in
-`Streamly.Prelude` to produce and consume streams.
-
-`writeN` is more efficient than `write` and should be preferred over
-`write` when the size of the stream is known.
-
-### Lazy Bytestring
-
-`Streamly.External.ByteString.Lazy` provides functions to for
-interoperation between streamly and lazy bytestring.
-
-#### Unfolds & Folds
-
-1. `readChunks`
-2. `read`
-
-These functions can be used with `unfold` available in
-`Streamly.Prelude` to produce stream of `Array Word8` or `Word8`.
-
-#### To/From streams
-
-1. `toChunks` = `unfold readChunks`
-2. `fromChunks`
-3. `fromChunksIO`
-
-`fromChunksIO` is similar to `fromChunks` but makes sure that the
-resulting `ByteString` is lazy in nature.
-
-As a consequence of using `foldr` in the implementation the effects of
-the stream are evaluated if the monad is strict. And hence, since IO is a
-strict monad, this function does not work as expected when interacting with
-the file API's (Eg. Functions from `streamly:Streamly.FileSystem.Handle`).
-
-In such cases we need to use a lazy version of IO.
-
-One can define a lazy version of IO like so,
-
-```
-newtype LazyIO a = LazyIO { runLazy :: IO a } deriving (Functor, Applicative)
-
-liftToLazy :: IO a -> LazyIO a
-liftToLazy = LazyIO
-
-instance Monad LazyIO where
-  return = pure
-  LazyIO a >>= f = LazyIO (unsafeInterleaveIO a >>= unsafeInterleaveIO . runLazy . f)
-```
-
-`fromChunks` can then be used as,
-
-```
-{-# INLINE fromChunksIO #-}
-fromChunksIO :: SerialT IO (Array Word8) -> IO ByteString
-fromChunksIO str = runLazy (fromChunks (S.hoist liftToLazy str))
-```
-
-
-We can compose `liftToLazy` with `liftLazyToM` (`liftLazyToM . liftToLazy`) to
-lift the evaluation to the desired monad. Please note that the desired monad
-here should be lazy in nature.
-
-See [this issue](https://github.com/psibi/streamly-bytestring/issues/7) for more details.
+The interconversion in the case of strict `Bytestring` and streamly `Array
+Word8` has no overhead as the underlying representation of ByteString and Array
+are the same, we just need to rewrap the data in a different type.
 
 ## Usage
 
@@ -129,13 +45,3 @@ fileSize path = do
     bsl <- BSL.readFile path
     lazyByteStringSize bsl
 ```
-
-
-
-
-
-
-
-
-
-
