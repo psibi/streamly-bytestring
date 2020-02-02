@@ -21,33 +21,29 @@ numChunks = 100000
 
 {-# INLINE benchIO #-}
 benchIO :: NFData b => String -> (Int -> IO a) -> (a -> b) -> Benchmark
-benchIO name src f = bench name $ nfIO $
-    randomRIO (1,1) >>= src >>= return . f
+benchIO name src f = bench name $ nfIO $ randomRIO (1, 1) >>= src >>= return . f
 
 {-# INLINE benchIO' #-}
 benchIO' :: NFData b => String -> (Int -> IO a) -> (a -> IO b) -> Benchmark
-benchIO' name src f = bench name $ nfIO $
-    randomRIO (1,1) >>= src >>= f
+benchIO' name src f = bench name $ nfIO $ randomRIO (1, 1) >>= src >>= f
 
 {-# INLINE fromChunks #-}
 fromChunks :: Monad m => Int -> m BSL.ByteString
 fromChunks n =
-    Lazy.fromChunks
-  $ S.map Strict.toArray
-  $ S.map BS.singleton
-  $ S.map fromIntegral
-  $ S.map (\x -> x `mod` 256)
-  $ S.enumerateFromTo n (n + numChunks)
+    Lazy.fromChunks $
+    S.map Strict.toArray $
+    S.map BS.singleton $
+    S.map fromIntegral $
+    S.map (\x -> x `mod` 256) $ S.enumerateFromTo n (n + numChunks)
 
 {-# INLINE fromChunksIO #-}
 fromChunksIO :: Int -> IO BSL.ByteString
 fromChunksIO n =
-    Lazy.fromChunksIO
-  $ S.map Strict.toArray
-  $ S.map BS.singleton
-  $ S.map fromIntegral
-  $ S.map (\x -> x `mod` 256)
-  $ S.enumerateFromTo n (n + numChunks)
+    Lazy.fromChunksIO $
+    S.map Strict.toArray $
+    S.map BS.singleton $
+    S.map fromIntegral $
+    S.map (\x -> x `mod` 256) $ S.enumerateFromTo n (n + numChunks)
 
 {-# INLINE toChunks #-}
 toChunks :: Monad m => BSL.ByteString -> m ()
@@ -56,18 +52,16 @@ toChunks = S.drain . Lazy.toChunks
 {-# INLINE strictWrite #-}
 strictWrite :: MonadIO m => Int -> m BS.ByteString
 strictWrite n =
-    S.fold Strict.write
-  $ S.map fromIntegral
-  $ S.map (\x -> x `mod` 256)
-  $ S.enumerateFromTo n (n + numElements)
+    S.fold Strict.write $
+    S.map fromIntegral $
+    S.map (\x -> x `mod` 256) $ S.enumerateFromTo n (n + numElements)
 
 {-# INLINE strictWriteN #-}
 strictWriteN :: MonadIO m => Int -> m BS.ByteString
 strictWriteN n =
-    S.fold (Strict.writeN numElements)
-  $ S.map fromIntegral
-  $ S.map (\x -> x `mod` 256)
-  $ S.enumerateFromTo n (n + numElements)
+    S.fold (Strict.writeN numElements) $
+    S.map fromIntegral $
+    S.map (\x -> x `mod` 256) $ S.enumerateFromTo n (n + numElements)
 
 {-# INLINE strictRead #-}
 strictRead :: MonadIO m => BS.ByteString -> m ()
@@ -78,12 +72,13 @@ lazyRead :: MonadIO m => BSL.ByteString -> m ()
 lazyRead = S.drain . S.unfold Lazy.read
 
 main :: IO ()
-main = defaultMain
+main =
+    defaultMain
         [ benchIO "Strict Write" strictWrite id
         , benchIO "Strict WriteN" strictWriteN id
         , benchIO' "Strict Read" strictWrite strictRead
         , benchIO' "Lazy Read" fromChunks lazyRead
         , benchIO "fromChunks" fromChunks id
-        , benchIO "fromChunksIO" fromChunksIO id        
+        , benchIO "fromChunksIO" fromChunksIO id
         , benchIO' "toChunks" fromChunks toChunks
         ]
