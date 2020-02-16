@@ -1,5 +1,5 @@
 name:                streamly-bytestring
-version:             0.1.0.1
+version:             0.1.1
 github:              "psibi/streamly-bytestring"
 license:             BSD3
 author:              "Sibi Prabakaran"
@@ -11,7 +11,7 @@ extra-source-files:
 - Changelog.md
 
 # Metadata used when publishing your package
-synopsis:            Library for streamly and bytestring interoperation. 
+synopsis:            Library for streamly and bytestring interoperation.
 category:            Streamly, Stream, ByteString
 
 # To avoid duplicated efforts in documentation and dealing with the

@@ -1,6 +1,8 @@
 # Changelog for streamly-bytestring
 
-## Unreleased
+## 0.1.1
+
+* Add `fromChunksIO` function to `Streamly.External.ByteString.Lazy` module.
 
 ## 0.1.0.1
 
