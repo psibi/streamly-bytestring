@@ -4,11 +4,13 @@ module Main where
 
 import Data.ByteString (ByteString)
 import Data.Word (Word8)
+import Foreign.ForeignPtr.Unsafe (unsafeForeignPtrToPtr)
 import GHC.IO.Handle (Handle)
+import GHC.Ptr (minusPtr)
 import System.Random (randomIO)
 import Streamly
+import Streamly.Internal.Memory.Array.Types (Array(..))
 import Streamly.FileSystem.Handle (readChunks)
-import Streamly.Memory.Array (Array)
 import System.IO (openFile, IOMode(ReadMode))
 import System.IO.Temp (withSystemTempFile)
 import Test.Hspec
@@ -92,6 +94,7 @@ testFromChunksIOLaziness h = do
         S.fromList (Strict.toArray (BS.singleton h) : undefined)
     return $ BSL.head lbs
 
+
 main :: IO ()
 main =
     hspec $ do
@@ -102,6 +105,13 @@ main =
                     ([1 .. 100] :: [Int])
             prop "Strict Identity" $ \bs ->
                 bs `shouldBe` Strict.fromArray (Strict.toArray bs)
+            prop "Strict Identity (with offset)" $ \bs ->
+                let bs' = BS.drop 5 bs
+                in bs' `shouldBe` Strict.fromArray (Strict.toArray bs')
+            prop "toArray never produces negative length" $ \bs ->
+                -- 'BS.drop 5' to trigger non-zero offset
+                let (Array nfp endPtr _) = Strict.toArray (BS.drop 5 bs)
+                in (endPtr `minusPtr` unsafeForeignPtrToPtr nfp) >= 0 `shouldBe` True
             prop "Lazy Identity" $ \bs -> do
                 bs2 <- Lazy.fromChunks . Lazy.toChunks $ bs
                 bs `shouldBe` bs2
