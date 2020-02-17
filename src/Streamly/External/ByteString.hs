@@ -38,7 +38,7 @@ toArray :: ByteString -> Array Word8
 toArray (PS fp off len) = Array nfp endPtr endPtr
   where
     nfp = fp `plusForeignPtr` off
-    endPtr = unsafeForeignPtrToPtr fp `plusPtr` len
+    endPtr = unsafeForeignPtrToPtr nfp `plusPtr` len
 
 -- | Convert an array of 'Word8' to a 'ByteString'. This function unwraps the
 -- 'Array' and wraps it with 'ByteString' constructors and hence the operation
