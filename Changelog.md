@@ -1,5 +1,9 @@
 # Changelog for streamly-bytestring
 
+## 0.1.2
+
+* Fix memory bug in Strict.toArray
+
 ## 0.1.1
 
 * Add `fromChunksIO` function to `Streamly.External.ByteString.Lazy` module.

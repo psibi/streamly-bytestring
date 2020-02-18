@@ -7,7 +7,7 @@ cabal-version: 1.12
 -- hash: af662f24c97fa6b630e84ef660885ad0de001dc9face27ef4698f5361e4e5484
 
 name:           streamly-bytestring
-version:        0.1.1
+version:        0.1.2
 synopsis:       Library for streamly and bytestring interoperation.
 description:    Please see the README on GitHub at <https://github.com/psibi/streamly-bytestring#readme>
 category:       Streamly, Stream, ByteString
