@@ -21,12 +21,12 @@ import Foreign.ForeignPtr.Compat (plusForeignPtr)
 #endif
 import Foreign.ForeignPtr.Unsafe (unsafeForeignPtrToPtr)
 import GHC.Ptr (minusPtr, plusPtr)
-import Streamly.Internal.Memory.Array.Types (Array(..))
+import Streamly.Internal.Data.Array.Storable.Foreign.Types (Array(..))
 import Streamly.Internal.Data.Unfold.Types (Unfold(..))
 import Streamly.Internal.Data.Unfold (lmap)
 import Streamly.Internal.Data.Fold.Types (Fold(..))
 
-import qualified Streamly.Internal.Memory.Array as A
+import qualified Streamly.Internal.Data.Array.Storable.Foreign as A
 
 import Prelude hiding (read)
 
@@ -35,7 +35,7 @@ import Prelude hiding (read)
 -- is performed in constant time.
 {-# INLINE toArray #-}
 toArray :: ByteString -> Array Word8
-toArray (PS fp off len) = Array nfp endPtr endPtr
+toArray (PS fp off len) = Array nfp endPtr
   where
     nfp = fp `plusForeignPtr` off
     endPtr = unsafeForeignPtrToPtr nfp `plusPtr` len

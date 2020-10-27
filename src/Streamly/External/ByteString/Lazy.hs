@@ -12,18 +12,18 @@ where
 
 import Data.ByteString.Lazy.Internal (ByteString(..))
 import Data.Word (Word8)
-import Streamly.Internal.Memory.Array.Types (Array(..))
+import Streamly.Internal.Data.Array.Storable.Foreign.Types (Array(..))
 import Streamly.Internal.Data.Stream.StreamD.Type (Step(..))
 import Streamly.Internal.Data.Unfold (concat)
 import Streamly.Internal.Data.Unfold.Types (Unfold(..))
 
 import qualified Streamly.External.ByteString as Strict
-import qualified Streamly.Internal.Memory.Array as A
+import qualified Streamly.Internal.Data.Array.Storable.Foreign as A
 
 import System.IO.Unsafe (unsafeInterleaveIO)
 
-import Streamly
-import qualified Streamly.Internal.Prelude as S
+import Streamly.Prelude (SerialT)
+import qualified Streamly.Internal.Data.Stream.IsStream as S
 
 import qualified Data.ByteString.Lazy.Internal as BSLI
 
