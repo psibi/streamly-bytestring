@@ -7,14 +7,12 @@ import Data.Word (Word8)
 import Foreign.ForeignPtr.Unsafe (unsafeForeignPtrToPtr)
 import GHC.IO.Handle (Handle)
 import GHC.Ptr (minusPtr)
-import System.Random (randomIO)
-import Streamly
-import Streamly.Internal.Memory.Array.Types (Array(..))
 import Streamly.FileSystem.Handle (readChunks)
+import Streamly.Internal.Data.Array.Foreign.Type (Array(..))
+import Streamly.Prelude (SerialT, MonadAsync)
 import System.IO (openFile, IOMode(ReadMode))
 import System.IO.Temp (withSystemTempFile)
-import Test.Hspec
-import Test.Hspec.QuickCheck
+import System.Random (randomIO)
 import Test.QuickCheck.Instances.ByteString ()
 
 import qualified Data.ByteString as BS
@@ -22,6 +20,9 @@ import qualified Data.ByteString.Lazy as BSL
 import qualified Streamly.External.ByteString as Strict
 import qualified Streamly.External.ByteString.Lazy as Lazy
 import qualified Streamly.Prelude as S
+
+import Test.Hspec
+import Test.Hspec.QuickCheck
 
 streamToByteString :: MonadAsync m => SerialT m (Array Word8) -> m ByteString
 streamToByteString stream = S.foldl' (<>) mempty $ S.map Strict.fromArray stream
@@ -110,7 +111,7 @@ main =
                 in bs' `shouldBe` Strict.fromArray (Strict.toArray bs')
             prop "toArray never produces negative length" $ \bs ->
                 -- 'BS.drop 5' to trigger non-zero offset
-                let (Array nfp endPtr _) = Strict.toArray (BS.drop 5 bs)
+                let (Array nfp endPtr) = Strict.toArray (BS.drop 5 bs)
                 in (endPtr `minusPtr` unsafeForeignPtrToPtr nfp) >= 0 `shouldBe` True
             prop "Lazy Identity" $ \bs -> do
                 bs2 <- Lazy.fromChunks . Lazy.toChunks $ bs

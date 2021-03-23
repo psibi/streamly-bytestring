@@ -12,22 +12,19 @@ where
 
 import Data.ByteString.Lazy.Internal (ByteString(..))
 import Data.Word (Word8)
-import Streamly.Internal.Memory.Array.Types (Array(..))
+import Streamly.Internal.Data.Array.Foreign.Type (Array)
 import Streamly.Internal.Data.Stream.StreamD.Type (Step(..))
-import Streamly.Internal.Data.Unfold (concat)
-import Streamly.Internal.Data.Unfold.Types (Unfold(..))
-
-import qualified Streamly.External.ByteString as Strict
-import qualified Streamly.Internal.Memory.Array as A
-
+import Streamly.Internal.Data.Unfold.Type (Unfold(..))
+import Streamly.Prelude (SerialT)
 import System.IO.Unsafe (unsafeInterleaveIO)
 
-import Streamly
-import qualified Streamly.Internal.Prelude as S
-
 import qualified Data.ByteString.Lazy.Internal as BSLI
+import qualified Streamly.External.ByteString as Strict
+import qualified Streamly.Internal.Data.Array.Foreign as Array
+import qualified Streamly.Internal.Data.Unfold as Unfold
+import qualified Streamly.Prelude as S
 
-import Prelude hiding (concat, read)
+import Prelude hiding (read)
 
 -- | Unfold a lazy ByteString to a stream of 'Array' 'Words'.
 {-# INLINE  readChunks #-}
@@ -41,7 +38,7 @@ readChunks = Unfold step seed
 -- | Unfold a lazy ByteString to a stream of Word8
 {-# INLINE read #-}
 read :: Monad m => Unfold m ByteString Word8
-read = concat readChunks A.read
+read = Unfold.many readChunks Array.read
 
 -- | Convert a lazy 'ByteString' to a serial stream of 'Array' 'Word8'.
 {-# INLINE toChunks #-}

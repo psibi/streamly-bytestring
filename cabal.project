@@ -1,0 +1,6 @@
+packages: .
+
+source-repository-package
+    type: git
+    location: https://github.com/composewell/streamly
+    tag: 82c177a554e52419bb69d85ad1ccf5eaaa50f018

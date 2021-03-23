@@ -38,7 +38,9 @@ packages:
 # using the same syntax as the packages field.
 # (e.g., acme-missiles-0.3)
 extra-deps:
-- streamly-0.7.0
+- github: composewell/streamly
+  commit: 82c177a554e52419bb69d85ad1ccf5eaaa50f018
+- fusion-plugin-types-0.1.0
 
 # Override default flag values for local packages and extra-deps
 # flags: {}
