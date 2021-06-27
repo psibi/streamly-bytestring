@@ -8,8 +8,7 @@ import Foreign.ForeignPtr.Unsafe (unsafeForeignPtrToPtr)
 import GHC.IO.Handle (Handle)
 import GHC.Ptr (minusPtr)
 import System.Random (randomIO)
-import Streamly
-import Streamly.Internal.Memory.Array.Types (Array(..))
+import Streamly.Internal.Data.Array.Foreign.Type (Array(..))
 import Streamly.FileSystem.Handle (readChunks)
 import System.IO (openFile, IOMode(ReadMode))
 import System.IO.Temp (withSystemTempFile)
@@ -23,7 +22,7 @@ import qualified Streamly.External.ByteString as Strict
 import qualified Streamly.External.ByteString.Lazy as Lazy
 import qualified Streamly.Prelude as S
 
-streamToByteString :: MonadAsync m => SerialT m (Array Word8) -> m ByteString
+streamToByteString :: S.MonadAsync m => S.SerialT m (Array Word8) -> m ByteString
 streamToByteString stream = S.foldl' (<>) mempty $ S.map Strict.fromArray stream
 
 checkFileContent :: FilePath -> Handle -> IO ()
@@ -75,14 +74,14 @@ propUnfoldTestLazy bl =
 
 propFromChunks :: Spec
 propFromChunks =
-    prop ("Lazy.fromChunks = BSL.fromChunks") $ \aL -> do
+    prop "Lazy.fromChunks = BSL.fromChunks" $ \aL -> do
         x1 <- Lazy.fromChunks $ S.map Strict.toArray $ S.fromList aL
         let x2 = BSL.fromChunks aL
         x1 `shouldBe` x2
 
 propFromChunksIO :: Spec
 propFromChunksIO =
-    prop ("Lazy.fromChunks = BSL.fromChunks") $ \aL -> do
+    prop "Lazy.fromChunks = BSL.fromChunks" $ \aL -> do
         x1 <- Lazy.fromChunksIO $ S.map Strict.toArray $ S.fromList aL
         let x2 = BSL.fromChunks aL
         x1 `shouldBe` x2
@@ -110,7 +109,7 @@ main =
                 in bs' `shouldBe` Strict.fromArray (Strict.toArray bs')
             prop "toArray never produces negative length" $ \bs ->
                 -- 'BS.drop 5' to trigger non-zero offset
-                let (Array nfp endPtr _) = Strict.toArray (BS.drop 5 bs)
+                let (Array nfp endPtr) = Strict.toArray (BS.drop 5 bs)
                 in (endPtr `minusPtr` unsafeForeignPtrToPtr nfp) >= 0 `shouldBe` True
             prop "Lazy Identity" $ \bs -> do
                 bs2 <- Lazy.fromChunks . Lazy.toChunks $ bs

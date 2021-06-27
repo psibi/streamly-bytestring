@@ -12,18 +12,16 @@ where
 
 import Data.ByteString.Lazy.Internal (ByteString(..))
 import Data.Word (Word8)
-import Streamly.Internal.Memory.Array.Types (Array(..))
+import Streamly.Data.Array.Foreign (Array)
 import Streamly.Internal.Data.Stream.StreamD.Type (Step(..))
-import Streamly.Internal.Data.Unfold (concat)
-import Streamly.Internal.Data.Unfold.Types (Unfold(..))
+import Streamly.Internal.Data.Unfold.Type (Unfold(..), many)
 
 import qualified Streamly.External.ByteString as Strict
-import qualified Streamly.Internal.Memory.Array as A
+import qualified Streamly.Data.Array.Foreign as A
 
 import System.IO.Unsafe (unsafeInterleaveIO)
 
-import Streamly
-import qualified Streamly.Internal.Prelude as S
+import qualified Streamly.Prelude as S
 
 import qualified Data.ByteString.Lazy.Internal as BSLI
 
@@ -36,16 +34,16 @@ readChunks = Unfold step seed
   where
     seed = return
     step (Chunk bs bl) = return $ Yield (Strict.toArray bs) bl
-    step Empty = return $ Stop
+    step Empty = return Stop
 
 -- | Unfold a lazy ByteString to a stream of Word8
 {-# INLINE read #-}
 read :: Monad m => Unfold m ByteString Word8
-read = concat readChunks A.read
+read = many readChunks A.read
 
 -- | Convert a lazy 'ByteString' to a serial stream of 'Array' 'Word8'.
 {-# INLINE toChunks #-}
-toChunks :: Monad m => ByteString -> SerialT m (Array Word8)
+toChunks :: Monad m => ByteString -> S.SerialT m (Array Word8)
 toChunks = S.unfold readChunks
 
 {-
@@ -89,13 +87,13 @@ instance Monad LazyIO where
 -- fromChunksIO str = runLazy (fromChunks (S.hoist liftToLazy str))
 -- @
 {-# INLINE fromChunks #-}
-fromChunks :: Monad m => SerialT m (Array Word8) -> m ByteString
+fromChunks :: Monad m => S.SerialT m (Array Word8) -> m ByteString
 fromChunks = S.foldr BSLI.chunk Empty . S.map Strict.fromArray
 
 -- | Convert a serial stream of 'Array' 'Word8' to a lazy 'ByteString' in the
 -- /IO/ monad.
 {-# INLINE fromChunksIO #-}
-fromChunksIO :: SerialT IO (Array Word8) -> IO ByteString
+fromChunksIO :: S.SerialT IO (Array Word8) -> IO ByteString
 fromChunksIO =
 -- Although the /IO/ monad is strict in nature we emulate laziness using
 -- 'unsafeInterleaveIO'.

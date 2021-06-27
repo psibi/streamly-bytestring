@@ -1,5 +1,5 @@
 name:                streamly-bytestring
-version:             0.1.2
+version:             0.2.0
 github:              "psibi/streamly-bytestring"
 license:             BSD3
 author:              "Sibi Prabakaran"
@@ -23,7 +23,7 @@ dependencies:
 - base       >= 4.7 && < 5
   # Should have an exact version match as we are depending on Internal modules.
   # Currently compatable with streamly HEAD on GitHub.
-- streamly   >= 0.7.0  && < 0.8
+- streamly   >= 0.8.0  && < 0.9
 - bytestring >= 0.10.0 && < 0.11
 
 when:
