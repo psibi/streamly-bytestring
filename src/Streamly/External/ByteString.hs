@@ -12,7 +12,6 @@ module Streamly.External.ByteString
 where
 
 import Control.Monad.IO.Class (MonadIO)
-import Data.ByteString.Internal (ByteString(..))
 import Data.Word (Word8)
 #if MIN_VERSION_base(4, 10, 0)
 import Foreign.ForeignPtr (plusForeignPtr)
@@ -21,11 +20,14 @@ import Foreign.ForeignPtr.Compat (plusForeignPtr)
 #endif
 import Foreign.ForeignPtr.Unsafe (unsafeForeignPtrToPtr)
 import GHC.Ptr (minusPtr, plusPtr)
-import Streamly.Internal.Data.Array.Foreign.Type (Array(..))
 import Streamly.Data.Unfold (Unfold, lmap)
 import Streamly.Data.Fold (Fold)
 
-import qualified Streamly.Internal.Data.Array.Foreign as A
+-- Internal imports
+import Data.ByteString.Internal (ByteString(..))
+import Streamly.Internal.Data.Array.Foreign.Type (Array(..))
+
+import qualified Streamly.Data.Array.Foreign as A
 
 import Prelude hiding (read)
 

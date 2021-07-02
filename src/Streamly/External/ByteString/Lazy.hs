@@ -10,20 +10,19 @@ module Streamly.External.ByteString.Lazy
   )
 where
 
-import Data.ByteString.Lazy.Internal (ByteString(..))
 import Data.Word (Word8)
+import Streamly.Data.Unfold (many)
 import Streamly.Data.Array.Foreign (Array)
+import System.IO.Unsafe (unsafeInterleaveIO)
+
+-- Internal imports
+import Data.ByteString.Lazy.Internal (ByteString(..), chunk)
 import Streamly.Internal.Data.Stream.StreamD.Type (Step(..))
-import Streamly.Internal.Data.Unfold.Type (Unfold(..), many)
+import Streamly.Internal.Data.Unfold.Type (Unfold(..))
 
 import qualified Streamly.External.ByteString as Strict
 import qualified Streamly.Data.Array.Foreign as A
-
-import System.IO.Unsafe (unsafeInterleaveIO)
-
 import qualified Streamly.Prelude as S
-
-import qualified Data.ByteString.Lazy.Internal as BSLI
 
 import Prelude hiding (concat, read)
 
@@ -88,7 +87,7 @@ instance Monad LazyIO where
 -- @
 {-# INLINE fromChunks #-}
 fromChunks :: Monad m => S.SerialT m (Array Word8) -> m ByteString
-fromChunks = S.foldr BSLI.chunk Empty . S.map Strict.fromArray
+fromChunks = S.foldr chunk Empty . S.map Strict.fromArray
 
 -- | Convert a serial stream of 'Array' 'Word8' to a lazy 'ByteString' in the
 -- /IO/ monad.
@@ -98,6 +97,6 @@ fromChunksIO =
 -- Although the /IO/ monad is strict in nature we emulate laziness using
 -- 'unsafeInterleaveIO'.
     S.foldrM
-        (\x b -> unsafeInterleaveIO b >>= pure . BSLI.chunk x)
-        (pure BSLI.Empty) .
+        (\x b -> unsafeInterleaveIO b >>= pure . chunk x)
+        (pure Empty) .
     S.map Strict.fromArray
