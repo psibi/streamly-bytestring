@@ -8,13 +8,15 @@ import Foreign.ForeignPtr.Unsafe (unsafeForeignPtrToPtr)
 import GHC.IO.Handle (Handle)
 import GHC.Ptr (minusPtr)
 import System.Random (randomIO)
-import Streamly.Internal.Data.Array.Foreign.Type (Array(..))
 import Streamly.FileSystem.Handle (readChunks)
 import System.IO (openFile, IOMode(ReadMode))
 import System.IO.Temp (withSystemTempFile)
 import Test.Hspec
 import Test.Hspec.QuickCheck
 import Test.QuickCheck.Instances.ByteString ()
+
+-- Internal imports
+import Streamly.Internal.Data.Array.Foreign.Type (Array(..))
 
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
