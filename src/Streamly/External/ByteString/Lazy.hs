@@ -1,5 +1,3 @@
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
-
 module Streamly.External.ByteString.Lazy
   ( readChunks
   , read
@@ -97,6 +95,6 @@ fromChunksIO =
 -- Although the /IO/ monad is strict in nature we emulate laziness using
 -- 'unsafeInterleaveIO'.
     S.foldrM
-        (\x b -> unsafeInterleaveIO b >>= pure . chunk x)
+        (\x b -> chunk x <$> unsafeInterleaveIO b)
         (pure Empty) .
     S.map Strict.fromArray
