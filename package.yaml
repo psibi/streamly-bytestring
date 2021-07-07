@@ -21,11 +21,9 @@ description:         Please see the README on GitHub at <https://github.com/psib
 
 dependencies:
 - base       >= 4.7 && < 5
-  # Should have an exact version match as we are depending on Internal modules.
-  # Currently compatable with streamly HEAD on GitHub.
-- streamly   >= 0.8.0  && < 0.9
-  # Keep the upper bound inclusive of the latest stable minor release of
-  # bytestring.
+  # Keep the upper bound inclusive of the latest stable minor release for
+  # packages depending on internal modules: streamly and bytestring
+- streamly   >= 0.8.0  && <= 0.8.0
 - bytestring >= 0.10.0 && <= 0.11.1.0
 
 when:
