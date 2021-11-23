@@ -99,6 +99,8 @@ jobs:
           # - 9.2.1
           - 9.0.1
           - 8.10.7
+          - 8.10.7+stack
+          - 8.10.7+macOS
           - 8.8.4
 
         include:
@@ -119,6 +121,18 @@ jobs:
             command: cabal-v2
             runner: ubuntu-latest
             cabal-version: 3.2
+
+          - name: 8.10.7+stack
+            command: stack
+            resolver: lts-18.18
+            stack_yaml: stack.yaml
+            runner: ubuntu-latest
+
+          - name: 8.10.7+macOS
+            ghc_version: 8.10.7
+            command: cabal-v2
+            runner: macos-latest
+            cabal_version: 3.4
 
           - name: 8.8.4
             ghc_version: 8.8.4
