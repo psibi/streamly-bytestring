@@ -78,7 +78,7 @@ jobs:
       # If you have not committed packcheck.sh in your repo at PACKCHECK
       # then it is automatically pulled from this URL.
       PACKCHECK_GITHUB_URL: "https://raw.githubusercontent.com/composewell/packcheck"
-      PACKCHECK_GITHUB_COMMIT: "37bbe8a79ad5136e654e48e03ec519060a5b11e6"
+      PACKCHECK_GITHUB_COMMIT: "v0.6.0"
 
       # ------------------------------------------------------------------------
       # Final build variables
@@ -95,41 +95,29 @@ jobs:
         # for more info about adding matrix elements.
         # Adding any element to the list will increase the number of matrix
         # elemets proportional to the cross product.
-        name: [ci]
-        # Uncomment GHC versions you want the CI to run on.
-        ghc_version:
-          [ 9.0.1
-          , 8.10.4
-          , 8.8.4
-          # Azure pipelines already has 8.6.5 and 8.4.4
-          # , 8.6.5
-          # , 8.4.4
-          ]
-        command:
-          [ cabal-v2
-          # , stack
-          ]
-        runner:
-          [ ubuntu-latest
-          # , macos-latest
-          ]
+        name:
+          - 9.0.1
+          - 8.10.4
+          - 8.8.4
+
         include:
-          # Additional ci matrix elements
-          # - name: ci
-          #   command: stack
-          #   runner: ubuntu-latest
+          - name: 9.0.1
+            ghc_version: 9.0.1
+            command: cabal-v2
+            runner: ubuntu-latest
 
-          # - name: ci
-          #   ghc_version: 8.4.4
-          #   command: stack
-          #   runner: ubuntu-latest
+          - name: 8.10.4
+            ghc_version: 8.10.4
+            command: cabal-v2
+            runner: ubuntu-latest
 
-          # - name: ci
-          #   ghc_version: 8.8.3
-          #   command: cabal-v2
-          #   runner: macos-latest
+          - name: 8.8.4
+            ghc_version: 8.8.4
+            command: cabal-v2
+            runner: ubuntu-latest
 
           - name: hlint
+            ghc_version: 8.8.4
             command: cabal-v2
             runner: ubuntu-latest
             pack_options: >-
@@ -140,10 +128,8 @@ jobs:
     - uses: actions/checkout@v2
 
     - uses: haskell/actions/setup@v1
-      if: ${{ matrix.name != 'hlint' }}
       with:
         ghc-version: ${{ matrix.ghc_version }}
-        # We need not put this in the matrix. This will be fixed in most cases.
         cabal-version: 3.2
 
     - uses: actions/cache@v2
