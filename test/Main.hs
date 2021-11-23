@@ -4,7 +4,6 @@ module Main where
 
 import Data.ByteString (ByteString)
 import Data.Word (Word8)
-import Foreign.ForeignPtr.Unsafe (unsafeForeignPtrToPtr)
 import GHC.IO.Handle (Handle)
 import GHC.Ptr (minusPtr)
 import System.Random (randomIO)
@@ -111,8 +110,8 @@ main =
                 in bs' `shouldBe` Strict.fromArray (Strict.toArray bs')
             prop "toArray never produces negative length" $ \bs ->
                 -- 'BS.drop 5' to trigger non-zero offset
-                let (Array nfp endPtr) = Strict.toArray (BS.drop 5 bs)
-                in (endPtr `minusPtr` unsafeForeignPtrToPtr nfp) >= 0 `shouldBe` True
+                let (Array _ sPtr ePtr) = Strict.toArray (BS.drop 5 bs)
+                in (ePtr `minusPtr` sPtr) >= 0 `shouldBe` True
             prop "Lazy Identity" $ \bs -> do
                 bs2 <- Lazy.fromChunks . Lazy.toChunks $ bs
                 bs `shouldBe` bs2
