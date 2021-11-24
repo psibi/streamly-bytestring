@@ -7,3 +7,4 @@
 azure-pipelines.yml
 package.yaml
 stack.yaml
+appveyor.yml
