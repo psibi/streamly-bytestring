@@ -53,7 +53,7 @@ jobs:
       # version.
       #STACKVER: "1.6.5"
       #STACK_UPGRADE: "y"
-      #RESOLVER: "lts-12"
+      #RESOLVER: ${{ matrix.resolver }}
 
       # ------------------------------------------------------------------------
       # cabal options
@@ -124,9 +124,10 @@ jobs:
 
           - name: 8.10.7+stack
             command: stack
-            resolver: lts-18.18
-            stack_yaml: stack.yaml
             runner: ubuntu-latest
+            pack_options: >-
+              STACK_YAML=stack.yaml
+              RESOLVER=lts-18.18
 
           - name: 8.10.7+macOS
             ghc_version: 8.10.7
