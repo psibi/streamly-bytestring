@@ -52,8 +52,6 @@ toArray (PS (ForeignPtr addr# fpcontents) off len) =
 -- is performed in constant time.
 {-# INLINE fromArray #-}
 fromArray :: Array Word8 -> ByteString
-fromArray arr
-    | arrStart arr == nullPtr = mempty
 fromArray Array {..}
     | aLen == 0 = mempty
     | otherwise = PS (makeForeignPtr arrContents arrStart) 0 aLen
