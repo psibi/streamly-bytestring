@@ -5,6 +5,5 @@
 .github/workflows/packcheck.yml
 .gitignore
 azure-pipelines.yml
-package.yaml
 stack.yaml
 appveyor.yml
