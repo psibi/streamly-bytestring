@@ -1,11 +1,4 @@
-cabal-version: 1.12
-
--- This file has been generated from package.yaml by hpack version 0.33.1.
---
--- see: https://github.com/sol/hpack
---
--- hash: ec5d4099c0c82b1487393616056b1f4f77ac9bd91e3764f38fd227abf5fe6dfd
-
+cabal-version:  1.12
 name:           streamly-bytestring
 version:        0.1.3
 synopsis:       Library for streamly and bytestring interoperation.
