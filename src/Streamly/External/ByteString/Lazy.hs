@@ -9,9 +9,9 @@ module Streamly.External.ByteString.Lazy
 where
 
 import Data.Word (Word8)
-import Streamly.Data.Unfold (many)
-import Streamly.Data.Array.Foreign (Array)
+import Streamly.Data.Array.Unboxed (Array)
 import System.IO.Unsafe (unsafeInterleaveIO)
+import Streamly.Prelude (SerialT) -- Should we use Stream here?
 
 -- Internal imports
 import Data.ByteString.Lazy.Internal (ByteString(..), chunk)
@@ -19,10 +19,11 @@ import Streamly.Internal.Data.Stream.StreamD.Type (Step(..))
 import Streamly.Internal.Data.Unfold.Type (Unfold(..))
 
 import qualified Streamly.External.ByteString as Strict
-import qualified Streamly.Data.Array.Foreign as A
-import qualified Streamly.Prelude as S
+import qualified Streamly.Data.Array.Unboxed as Array
+import qualified Streamly.Data.Unfold as Unfold
+import qualified Streamly.Prelude as Stream
 
-import Prelude hiding (concat, read)
+import Prelude hiding (read)
 
 -- | Unfold a lazy ByteString to a stream of 'Array' 'Words'.
 {-# INLINE  readChunks #-}
@@ -36,12 +37,12 @@ readChunks = Unfold step seed
 -- | Unfold a lazy ByteString to a stream of Word8
 {-# INLINE read #-}
 read :: Monad m => Unfold m ByteString Word8
-read = many readChunks A.read
+read = Unfold.many Array.read readChunks
 
 -- | Convert a lazy 'ByteString' to a serial stream of 'Array' 'Word8'.
 {-# INLINE toChunks #-}
-toChunks :: Monad m => ByteString -> S.SerialT m (Array Word8)
-toChunks = S.unfold readChunks
+toChunks :: Monad m => ByteString -> SerialT m (Array Word8)
+toChunks = Stream.unfold readChunks
 
 {-
 newtype LazyIO a = LazyIO { runLazy :: IO a } deriving (Functor, Applicative)
@@ -80,21 +81,19 @@ instance Monad LazyIO where
 -- /fromChunks/ can then be used as,
 -- @
 -- {-# INLINE fromChunksIO #-}
--- fromChunksIO :: SerialT IO (Array Word8) -> IO ByteString
--- fromChunksIO str = runLazy (fromChunks (S.hoist liftToLazy str))
+-- fromChunksIO :: Stream IO (Array Word8) -> IO ByteString
+-- fromChunksIO str = runLazy (fromChunks (Stream.hoist liftToLazy str))
 -- @
 {-# INLINE fromChunks #-}
-fromChunks :: Monad m => S.SerialT m (Array Word8) -> m ByteString
-fromChunks = S.foldr chunk Empty . S.map Strict.fromArray
+fromChunks :: Monad m => SerialT m (Array Word8) -> m ByteString
+fromChunks = Stream.foldr chunk Empty . Stream.map Strict.fromArray
 
 -- | Convert a serial stream of 'Array' 'Word8' to a lazy 'ByteString' in the
 -- /IO/ monad.
 {-# INLINE fromChunksIO #-}
-fromChunksIO :: S.SerialT IO (Array Word8) -> IO ByteString
+fromChunksIO :: SerialT IO (Array Word8) -> IO ByteString
 fromChunksIO =
--- Although the /IO/ monad is strict in nature we emulate laziness using
--- 'unsafeInterleaveIO'.
-    S.foldrM
-        (\x b -> chunk x <$> unsafeInterleaveIO b)
-        (pure Empty) .
-    S.map Strict.fromArray
+    -- Although the /IO/ monad is strict in nature we emulate laziness using
+    -- 'unsafeInterleaveIO'.
+    Stream.foldrM (\x b -> chunk x <$> unsafeInterleaveIO b) (pure Empty)
+        . Stream.map Strict.fromArray

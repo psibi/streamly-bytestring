@@ -5,7 +5,6 @@ module Main where
 import Data.ByteString (ByteString)
 import Data.Word (Word8)
 import GHC.IO.Handle (Handle)
-import GHC.Ptr (minusPtr)
 import System.Random (randomIO)
 import Streamly.FileSystem.Handle (readChunks)
 import System.IO (openFile, IOMode(ReadMode))
@@ -15,7 +14,7 @@ import Test.Hspec.QuickCheck
 import Test.QuickCheck.Instances.ByteString ()
 
 -- Internal imports
-import Streamly.Internal.Data.Array.Foreign.Type (Array(..))
+import Streamly.Internal.Data.Array.Unboxed.Type (Array(..))
 
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
@@ -94,7 +93,6 @@ testFromChunksIOLaziness h = do
         S.fromList (Strict.toArray (BS.singleton h) : undefined)
     return $ BSL.head lbs
 
-
 main :: IO ()
 main =
     hspec $ do
@@ -106,12 +104,12 @@ main =
             prop "Strict Identity" $ \bs ->
                 bs `shouldBe` Strict.fromArray (Strict.toArray bs)
             prop "Strict Identity (with offset)" $ \bs ->
-                let bs' = BS.drop 5 bs
-                in bs' `shouldBe` Strict.fromArray (Strict.toArray bs')
+                let bs1 = BS.drop 5 bs
+                 in bs1 `shouldBe` Strict.fromArray (Strict.toArray bs1)
             prop "toArray never produces negative length" $ \bs ->
                 -- 'BS.drop 5' to trigger non-zero offset
-                let (Array _ sPtr ePtr) = Strict.toArray (BS.drop 5 bs)
-                in (ePtr `minusPtr` sPtr) >= 0 `shouldBe` True
+                let (Array _ startI endI) = Strict.toArray (BS.drop 5 bs)
+                 in (endI - startI) >= 0 `shouldBe` True
             prop "Lazy Identity" $ \bs -> do
                 bs2 <- Lazy.fromChunks . Lazy.toChunks $ bs
                 bs `shouldBe` bs2
