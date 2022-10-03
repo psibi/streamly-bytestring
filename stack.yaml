@@ -1,14 +1,20 @@
-resolver: lts-18.18
+resolver: lts-19.25
 
 packages:
 - .
 
 extra-deps:
 - unicode-data-0.3.0
-- git: https://github.com/composewell/streamly
-  commit: "3d8ffee6840259aa870cddcb9665f17e5478a79e"
-- git: https://github.com/composewell/streamly
-  commit: "3d8ffee6840259aa870cddcb9665f17e5478a79e"
+- bytestring-0.11.3.1
+- directory-1.3.8.0
+- text-1.2.5.0
+- binary-0.8.9.1
+- filepath-1.4.100.0
+- unix-2.8.0.0
+- github: composewell/streamly
+  commit: "master"
+- github: composewell/streamly
+  commit: "master"
   subdirs:
     - core
 
