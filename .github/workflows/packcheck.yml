@@ -128,7 +128,7 @@ jobs:
             runner: ubuntu-latest
             pack_options: >-
               STACK_YAML=stack.yaml
-              RESOLVER=lts-18.18
+              DISABLE_BENCH=y
 
           - name: 8.10.7+macOS
             ghc_version: 8.10.7
