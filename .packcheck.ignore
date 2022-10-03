@@ -1,9 +1,5 @@
 .packcheck.ignore
-.azure/azure-linux-template.yml
-.azure/azure-osx-template.yml
-.azure/azure-windows-template.yml
 .github/workflows/packcheck.yml
 .gitignore
-azure-pipelines.yml
 stack.yaml
 appveyor.yml
