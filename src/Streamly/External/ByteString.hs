@@ -33,12 +33,12 @@ import Streamly.Data.Unfold (Unfold, lmap)
 
 -- Internal imports
 import Data.ByteString.Internal (ByteString(..))
-import Streamly.Internal.Data.Array.Unboxed.Mut.Type (nilArrayContents)
-import Streamly.Internal.Data.Array.Unboxed.Type (Array(..))
-import Streamly.Data.Unbox (MutableByteArray(..))
+import Streamly.Internal.Data.Array.Type (Array(..))
+import Streamly.Internal.Data.Unboxed (MutableByteArray(..))
 import Streamly.Internal.System.IO (unsafeInlineIO)
 
-import qualified Streamly.Data.Array.Unboxed as Array
+import qualified Streamly.Data.Array as Array
+import qualified Streamly.Internal.Data.Unboxed as Unboxed
 import qualified Streamly.Internal.Data.Unfold as Unfold
 import qualified Streamly.Internal.Data.Stream.StreamD as StreamD
 
@@ -50,7 +50,7 @@ mutableByteArrayContents# marr# = byteArrayContents# (unsafeCoerce# marr#)
 
 -- | Helper function that creates a ForeignPtr
 {-# INLINE makeForeignPtr #-}
-makeForeignPtr :: MutableByteArray a -> Int -> ForeignPtr a
+makeForeignPtr :: MutableByteArray -> Int -> ForeignPtr a
 makeForeignPtr (MutableByteArray marr#) (I# off#) =
     ForeignPtr
         (mutableByteArrayContents# marr# `plusAddr#` off#)
@@ -62,7 +62,7 @@ makeForeignPtr (MutableByteArray marr#) (I# off#) =
 {-# INLINE toArray #-}
 toArray :: ByteString -> Array Word8
 toArray (BS (ForeignPtr addr# _) _)
-    | Ptr addr# == nullPtr = Array nilArrayContents 0 0
+    | Ptr addr# == nullPtr = Array Unboxed.nil 0 0
 toArray (BS (ForeignPtr addr# (PlainPtr marr#)) len) =
     let off = I# (addr# `minusAddr#` mutableByteArrayContents# marr#)
      in Array (MutableByteArray marr#) off (off + len)
@@ -90,7 +90,7 @@ fromArray Array {..}
 -- | Unfold a strict ByteString to a stream of Word8.
 {-# INLINE read #-}
 read :: Monad m => Unfold m ByteString Word8
-read = lmap toArray Array.read
+read = lmap toArray Array.reader
 
 -- | Fold a stream of Word8 to a strict ByteString of given size in bytes.
 {-# INLINE writeN #-}
