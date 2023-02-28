@@ -4,7 +4,8 @@ import qualified Streamly.External.ByteString as Strict
 import qualified Streamly.External.ByteString.Lazy as Lazy
 import Control.Monad.IO.Class (MonadIO)
 
-import qualified Streamly.Prelude as S
+import qualified Streamly.Data.Stream as S
+import qualified Streamly.Data.Fold as Fold
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
 
@@ -31,45 +32,45 @@ benchIO' name src f = bench name $ nfIO $ randomRIO (1, 1) >>= src >>= f
 fromChunks :: Monad m => Int -> m BSL.ByteString
 fromChunks n =
     Lazy.fromChunks $
-    S.map Strict.toArray $
-    S.map BS.singleton $
-    S.map fromIntegral $
-    S.map (\x -> x `mod` 256) $ S.enumerateFromTo n (n + numChunks)
+    fmap Strict.toArray $
+    fmap BS.singleton $
+    fmap fromIntegral $
+    fmap (\x -> x `mod` 256) $ S.enumerateFromTo n (n + numChunks)
 
 {-# INLINE fromChunksIO #-}
 fromChunksIO :: Int -> IO BSL.ByteString
 fromChunksIO n =
     Lazy.fromChunksIO $
-    S.map Strict.toArray $
-    S.map BS.singleton $
-    S.map fromIntegral $
-    S.map (\x -> x `mod` 256) $ S.enumerateFromTo n (n + numChunks)
+    fmap Strict.toArray $
+    fmap BS.singleton $
+    fmap fromIntegral $
+    fmap (\x -> x `mod` 256) $ S.enumerateFromTo n (n + numChunks)
 
 {-# INLINE toChunks #-}
 toChunks :: Monad m => BSL.ByteString -> m ()
-toChunks = S.drain . Lazy.toChunks
+toChunks = S.fold Fold.drain . Lazy.toChunks
 
 {-# INLINE strictWrite #-}
 strictWrite :: MonadIO m => Int -> m BS.ByteString
 strictWrite n =
     S.fold Strict.write $
-    S.map fromIntegral $
-    S.map (\x -> x `mod` 256) $ S.enumerateFromTo n (n + numElements)
+    fmap fromIntegral $
+    fmap (\x -> x `mod` 256) $ S.enumerateFromTo n (n + numElements)
 
 {-# INLINE strictWriteN #-}
 strictWriteN :: MonadIO m => Int -> m BS.ByteString
 strictWriteN n =
     S.fold (Strict.writeN numElements) $
-    S.map fromIntegral $
-    S.map (\x -> x `mod` 256) $ S.enumerateFromTo n (n + numElements)
+    fmap fromIntegral $
+    fmap (\x -> x `mod` 256) $ S.enumerateFromTo n (n + numElements)
 
 {-# INLINE strictRead #-}
 strictRead :: MonadIO m => BS.ByteString -> m ()
-strictRead = S.drain . S.unfold Strict.read
+strictRead = S.fold Fold.drain . S.unfold Strict.read
 
 {-# INLINE lazyRead #-}
 lazyRead :: MonadIO m => BSL.ByteString -> m ()
-lazyRead = S.drain . S.unfold Lazy.read
+lazyRead = S.fold Fold.drain . S.unfold Lazy.read
 
 main :: IO ()
 main =
