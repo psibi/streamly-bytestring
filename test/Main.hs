@@ -6,7 +6,7 @@ import Data.ByteString (ByteString)
 import Data.Word (Word8)
 import GHC.IO.Handle (Handle)
 import System.Random (randomIO)
-import Streamly.FileSystem.Handle (readChunks)
+import Streamly.FileSystem.Handle (chunkReader)
 import System.IO (openFile, IOMode(ReadMode))
 import System.IO.Temp (withSystemTempFile)
 import Test.Hspec
@@ -14,31 +14,33 @@ import Test.Hspec.QuickCheck
 import Test.QuickCheck.Instances.ByteString ()
 
 -- Internal imports
-import Streamly.Internal.Data.Array.Unboxed.Type (Array(..))
+import Streamly.Internal.Data.Array.Type (Array(..))
 
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
 import qualified Streamly.External.ByteString as Strict
 import qualified Streamly.External.ByteString.Lazy as Lazy
-import qualified Streamly.Prelude as S
+import qualified Streamly.Data.Stream as S
+import qualified Streamly.Data.Fold as Fold
 
-streamToByteString :: S.MonadAsync m => S.SerialT m (Array Word8) -> m ByteString
-streamToByteString stream = S.foldl' (<>) mempty $ S.map Strict.fromArray stream
+streamToByteString :: Monad m => S.Stream m (Array Word8) -> m ByteString
+streamToByteString stream =
+    S.fold (Fold.foldl' (<>) mempty) $ fmap Strict.fromArray stream
 
 checkFileContent :: FilePath -> Handle -> IO ()
 checkFileContent filename handle' = do
     print $ "Checking " <> filename
     bsContent <- BS.hGetContents handle'
     handle <- openFile filename ReadMode
-    bsStreamly <- streamToByteString $ S.unfold readChunks handle
+    bsStreamly <- streamToByteString $ S.unfold chunkReader handle
     bsContent `shouldBe` bsStreamly
 
 word8List :: Int -> IO [Word8]
 word8List l =
-    S.toList $
+    S.fold Fold.toList $
     S.take l $
-    S.map fromIntegral $
-    S.map (\x -> abs x `mod` 256) $ S.repeatM (randomIO :: IO Int)
+    fmap fromIntegral $
+    fmap (\x -> abs x `mod` 256) $ S.repeatM (randomIO :: IO Int)
 
 propFoldTestStrict :: [Word8] -> Spec
 propFoldTestStrict bl =
@@ -61,7 +63,7 @@ propUnfoldTestStrict bl =
     prop
         ("Strict: toList . unfold read . pack = id" ++
          " -- Size: " ++ show (length bl) ++ " bytes") $ do
-        bl' <- S.toList (S.unfold Strict.read (BS.pack bl))
+        bl' <- S.fold Fold.toList (S.unfold Strict.read (BS.pack bl))
         bl' `shouldBe` bl
 
 propUnfoldTestLazy :: [Word8] -> Spec
@@ -69,20 +71,20 @@ propUnfoldTestLazy bl =
     prop
         ("Lazy: toList . unfold read . pack = id" ++
          " -- Size: " ++ show (length bl) ++ " bytes") $ do
-        bl' <- S.toList (S.unfold Lazy.read (BSL.pack bl))
+        bl' <- S.fold Fold.toList (S.unfold Lazy.read (BSL.pack bl))
         bl' `shouldBe` bl
 
 propFromChunks :: Spec
 propFromChunks =
     prop "Lazy.fromChunks = BSL.fromChunks" $ \aL -> do
-        x1 <- Lazy.fromChunks $ S.map Strict.toArray $ S.fromList aL
+        x1 <- Lazy.fromChunks $ fmap Strict.toArray $ S.fromList aL
         let x2 = BSL.fromChunks aL
         x1 `shouldBe` x2
 
 propFromChunksIO :: Spec
 propFromChunksIO =
     prop "Lazy.fromChunks = BSL.fromChunks" $ \aL -> do
-        x1 <- Lazy.fromChunksIO $ S.map Strict.toArray $ S.fromList aL
+        x1 <- Lazy.fromChunksIO $ fmap Strict.toArray $ S.fromList aL
         let x2 = BSL.fromChunks aL
         x1 `shouldBe` x2
 
