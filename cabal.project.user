@@ -3,10 +3,10 @@ packages: .
 source-repository-package
    type: git
    location: https://github.com/composewell/streamly.git
-   tag: master
+   tag: 909152e106c13d69952a99b9499f3727e8c130f6
 
 source-repository-package
   type: git
   location: https://github.com/composewell/streamly.git
-  tag: master
+  tag: 909152e106c13d69952a99b9499f3727e8c130f6
   subdir: core
