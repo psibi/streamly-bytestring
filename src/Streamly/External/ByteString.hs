@@ -38,9 +38,9 @@ import Streamly.Internal.Data.Unboxed (MutableByteArray(..))
 import Streamly.Internal.System.IO (unsafeInlineIO)
 
 import qualified Streamly.Data.Array as Array
-import qualified Streamly.Internal.Data.Unboxed as Unboxed
-import qualified Streamly.Internal.Data.Unfold as Unfold
-import qualified Streamly.Internal.Data.Stream.StreamD as StreamD
+import qualified Streamly.Internal.Data.Unfold as Unfold (fold, mkUnfoldrM)
+import qualified Streamly.Internal.Data.Unboxed as Unboxed (nil)
+import qualified Streamly.Internal.Data.Stream.StreamD as StreamD (Step(Yield))
 
 import Prelude hiding (read)
 
@@ -56,9 +56,9 @@ makeForeignPtr (MutableByteArray marr#) (I# off#) =
         (mutableByteArrayContents# marr# `plusAddr#` off#)
         (PlainPtr marr#)
 
--- | Convert a 'ByteString' to an array of 'Word8'. This function unwraps the
--- 'ByteString' and wraps it with 'Array' constructors and hence the operation
--- is performed in constant time.
+-- | Convert a 'ByteString' to an array of 'Word8'. It can be done in constant
+-- time only for GHC allocated memory. For foreign allocator allocated memory
+-- there is a copy involved.
 {-# INLINE toArray #-}
 toArray :: ByteString -> Array Word8
 toArray (BS (ForeignPtr addr# _) _)
