@@ -6,9 +6,13 @@ module Streamly.External.ByteString
   ( toArray
   , fromArray
 
-  , read
+  , reader
+
   , writeN
   , write
+
+  -- Deprecated
+  , read
   )
 where
 
@@ -88,9 +92,9 @@ fromArray Array {..}
     aLen = arrEnd - arrStart
 
 -- | Unfold a strict ByteString to a stream of Word8.
-{-# INLINE read #-}
-read :: Monad m => Unfold m ByteString Word8
-read = lmap toArray Array.reader
+{-# INLINE reader #-}
+reader :: Monad m => Unfold m ByteString Word8
+reader = lmap toArray Array.reader
 
 -- | Fold a stream of Word8 to a strict ByteString of given size in bytes.
 {-# INLINE writeN #-}
@@ -101,3 +105,12 @@ writeN i = fromArray <$> Array.writeN i
 {-# INLINE write #-}
 write :: MonadIO m => Fold m Word8 ByteString
 write = fromArray <$> Array.write
+
+--------------------------------------------------------------------------------
+-- Deprecated
+--------------------------------------------------------------------------------
+
+{-# DEPRECATED read "Please use reader instead." #-}
+{-# INLINE read #-}
+read :: Monad m => Unfold m ByteString Word8
+read = reader
