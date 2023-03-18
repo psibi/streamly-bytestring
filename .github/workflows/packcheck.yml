@@ -91,16 +91,16 @@ jobs:
 
         include:
 
-          - name: 9.4.2
-            ghc_version: 9.4.2
+          - name: 9.4.4
+            ghc_version: 9.4.4
             command: cabal-v2
             runner: ubuntu-latest
             cabal-version: 3.8.1.0
             pack_options: >-
               DISABLE_BENCH=y
 
-          - name: 9.2.4
-            ghc_version: 9.2.4
+          - name: 9.2.7
+            ghc_version: 9.2.7
             command: cabal-v2
             runner: ubuntu-latest
             cabal-version: 3.6.2.0
@@ -134,6 +134,12 @@ jobs:
 
           - name: 8.8.4
             ghc_version: 8.8.4
+            command: cabal-v2
+            runner: ubuntu-latest
+            cabal-version: 3.2
+
+          - name: 8.6.5
+            ghc_version: 8.6.5
             command: cabal-v2
             runner: ubuntu-latest
             cabal-version: 3.2
