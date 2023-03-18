@@ -66,11 +66,11 @@ strictWriteN n =
 
 {-# INLINE strictRead #-}
 strictRead :: MonadIO m => BS.ByteString -> m ()
-strictRead = S.fold Fold.drain . S.unfold Strict.read
+strictRead = S.fold Fold.drain . S.unfold Strict.reader
 
 {-# INLINE lazyRead #-}
 lazyRead :: MonadIO m => BSL.ByteString -> m ()
-lazyRead = S.fold Fold.drain . S.unfold Lazy.read
+lazyRead = S.fold Fold.drain . S.unfold Lazy.reader
 
 main :: IO ()
 main =

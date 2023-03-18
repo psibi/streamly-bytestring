@@ -1,10 +1,14 @@
 module Streamly.External.ByteString.Lazy
-  ( readChunks
-  , read
+  ( chunkReader
+  , reader
 
   , toChunks
   , fromChunks
   , fromChunksIO
+
+  -- Deprecated
+  , read
+  , readChunks
   )
 where
 
@@ -26,19 +30,20 @@ import qualified Streamly.Data.Stream as Stream
 import Prelude hiding (read)
 
 -- | Unfold a lazy ByteString to a stream of 'Array' 'Words'.
-{-# INLINE  readChunks #-}
-readChunks :: Monad m => Unfold m ByteString (Array Word8)
-readChunks = Unfold step seed
+{-# INLINE  chunkReader #-}
+chunkReader :: Monad m => Unfold m ByteString (Array Word8)
+chunkReader = Unfold step seed
   where
     seed = return
     step (Chunk bs bl) = return $ Yield (Strict.toArray bs) bl
     step Empty = return Stop
 
 -- | Unfold a lazy ByteString to a stream of Word8
-{-# INLINE read #-}
-read :: Monad m => Unfold m ByteString Word8
-read = Unfold.many Array.reader readChunks
+{-# INLINE reader #-}
+reader :: Monad m => Unfold m ByteString Word8
+reader = Unfold.many Array.reader readChunks
 
+-- TODO: "toChunks" should be called "read" instead
 -- | Convert a lazy 'ByteString' to a serial stream of 'Array' 'Word8'.
 {-# INLINE toChunks #-}
 toChunks :: Monad m => ByteString -> Stream m (Array Word8)
@@ -97,3 +102,17 @@ fromChunksIO =
     -- 'unsafeInterleaveIO'.
     Stream.foldrM (\x b -> chunk x <$> unsafeInterleaveIO b) (pure Empty)
         . fmap Strict.fromArray
+
+--------------------------------------------------------------------------------
+-- Deprecated
+--------------------------------------------------------------------------------
+
+-- | Unfold a lazy ByteString to a stream of 'Array' 'Words'.
+{-# INLINE  readChunks #-}
+readChunks :: Monad m => Unfold m ByteString (Array Word8)
+readChunks = chunkReader
+
+-- | Unfold a lazy ByteString to a stream of Word8
+{-# INLINE read #-}
+read :: Monad m => Unfold m ByteString Word8
+read = reader
