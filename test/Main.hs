@@ -63,7 +63,7 @@ propUnfoldTestStrict bl =
     prop
         ("Strict: toList . unfold read . pack = id" ++
          " -- Size: " ++ show (length bl) ++ " bytes") $ do
-        bl' <- S.fold Fold.toList (S.unfold Strict.read (BS.pack bl))
+        bl' <- S.fold Fold.toList (S.unfold Strict.reader (BS.pack bl))
         bl' `shouldBe` bl
 
 propUnfoldTestLazy :: [Word8] -> Spec
@@ -71,7 +71,7 @@ propUnfoldTestLazy bl =
     prop
         ("Lazy: toList . unfold read . pack = id" ++
          " -- Size: " ++ show (length bl) ++ " bytes") $ do
-        bl' <- S.fold Fold.toList (S.unfold Lazy.read (BSL.pack bl))
+        bl' <- S.fold Fold.toList (S.unfold Lazy.reader (BSL.pack bl))
         bl' `shouldBe` bl
 
 propFromChunks :: Spec

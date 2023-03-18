@@ -4,6 +4,7 @@
 
 * Support streamly-0.9.0
 * Support bytestring >= 0.3.0
+* Rename read to reader
 
 ## 0.1.4 (Dec 2021)
 
