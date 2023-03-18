@@ -22,10 +22,6 @@ import qualified Streamly.External.ByteString as Strict
 import qualified Streamly.Data.Array as Array
 import qualified Streamly.Data.Unfold as Unfold
 import qualified Streamly.Data.Stream as Stream
-import qualified Streamly.Internal.Data.Stream.StreamD.Eliminate as Stream
-    ( foldr
-    , foldrM
-    )
 
 import Prelude hiding (read)
 
