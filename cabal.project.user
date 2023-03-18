@@ -2,11 +2,8 @@ packages: .
 
 -- source-repository-package
 --   type: git
---   location: https://github.com/composewell/streamly.git
+--   location: https://github.com/composewell/streamly-core.git
 --   tag: 9596aea3ab33d3c2fa513247fcfe8604bd7ff454
 
--- source-repository-package
---   type: git
---   location: https://github.com/composewell/streamly.git
---   tag: 9596aea3ab33d3c2fa513247fcfe8604bd7ff454
---   subdir: core
+package streamly-bytestring
+  ghc-options: -Werror
