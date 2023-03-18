@@ -15,6 +15,12 @@ build-type:     Simple
 extra-source-files:
     README.md
     Changelog.md
+tested-with:  GHC==8.6.5
+            , GHC==8.8.4
+            , GHC==8.10.7
+            , GHC==9.0.1
+            , GHC==9.2.7
+            , GHC==9.4.4
 
 source-repository head
   type: git
@@ -39,12 +45,6 @@ library
                  || ( >= 0.11.3.1 && < 0.11.4 )
                  || == 0.11.4.*
     , streamly-core == 0.1.0.*
-  if impl(ghc < 8.1)
-    build-depends:
-        base-compat >=0.11
-  if impl(ghc < 8)
-    build-depends:
-        transformers >=0.4
   default-language: Haskell2010
 
 test-suite sb-test
@@ -68,12 +68,6 @@ test-suite sb-test
     , streamly-bytestring
     , temporary
     , QuickCheck
-  if impl(ghc < 8.1)
-    build-depends:
-        base-compat >=0.11
-  if impl(ghc < 8)
-    build-depends:
-        transformers >=0.4
   default-language: Haskell2010
 
 benchmark sb-benchmark
@@ -92,10 +86,4 @@ benchmark sb-benchmark
     , random
     , streamly-core
     , streamly-bytestring
-  if impl(ghc < 8.1)
-    build-depends:
-        base-compat >=0.11
-  if impl(ghc < 8)
-    build-depends:
-        transformers >=0.4
   default-language: Haskell2010
