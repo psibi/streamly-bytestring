@@ -2,7 +2,7 @@
 
 ## 0.2.0 (Mar 2023)
 
-* Support streamly-0.9.0
+* Support streamly-core-0.1.0
 * Support bytestring >= 0.3.0
 * Rename read to reader
 
