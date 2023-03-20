@@ -107,12 +107,12 @@ fromChunksIO =
 -- Deprecated
 --------------------------------------------------------------------------------
 
--- | Unfold a lazy ByteString to a stream of 'Array' 'Words'.
+{-# DEPRECATED readChunks "Please use chunkReader instead." #-}
 {-# INLINE  readChunks #-}
 readChunks :: Monad m => Unfold m ByteString (Array Word8)
 readChunks = chunkReader
 
--- | Unfold a lazy ByteString to a stream of Word8
+{-# DEPRECATED read "Please use reader instead." #-}
 {-# INLINE read #-}
 read :: Monad m => Unfold m ByteString Word8
 read = reader
