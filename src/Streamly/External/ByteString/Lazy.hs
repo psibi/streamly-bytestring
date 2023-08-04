@@ -1,3 +1,5 @@
+{-# LANGUAGE CPP             #-}
+
 module Streamly.External.ByteString.Lazy
   ( chunkReader
   , reader
@@ -19,8 +21,14 @@ import Streamly.Data.Stream (Stream)
 
 -- Internal imports
 import Data.ByteString.Lazy.Internal (ByteString(..), chunk)
-import Streamly.Internal.Data.Stream.StreamD.Type (Step(..))
+
+#if MIN_VERSION_streamly_core(0,2,0)
+import Streamly.Internal.Data.Unfold (Unfold(..))
+import Streamly.Internal.Data.Stream (Step(..))
+#else
 import Streamly.Internal.Data.Unfold.Type (Unfold(..))
+import Streamly.Internal.Data.Stream.StreamD.Type (Step(..))
+#endif
 
 import qualified Streamly.External.ByteString as Strict
 import qualified Streamly.Data.Array as Array

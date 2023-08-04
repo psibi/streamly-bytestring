@@ -37,14 +37,22 @@ import Streamly.Data.Unfold (Unfold, lmap)
 
 -- Internal imports
 import Data.ByteString.Internal (ByteString(..))
-import Streamly.Internal.Data.Array.Type (Array(..))
-import Streamly.Internal.Data.Unboxed (MutableByteArray(..))
 import Streamly.Internal.System.IO (unsafeInlineIO)
 
 import qualified Streamly.Data.Array as Array
 import qualified Streamly.Internal.Data.Unfold as Unfold (fold, mkUnfoldrM)
+
+#if MIN_VERSION_streamly_core(0,2,0)
+import Streamly.Internal.Data.Array (Array(..))
+import Streamly.Internal.Data.Unbox (MutableByteArray(..))
+import qualified Streamly.Internal.Data.Unbox as Unboxed (nil)
+import qualified Streamly.Internal.Data.Stream as StreamD (Step(Yield))
+#else
+import Streamly.Internal.Data.Array.Type (Array(..))
+import Streamly.Internal.Data.Unboxed (MutableByteArray(..))
 import qualified Streamly.Internal.Data.Unboxed as Unboxed (nil)
 import qualified Streamly.Internal.Data.Stream.StreamD as StreamD (Step(Yield))
+#endif
 
 import Prelude hiding (read)
 
@@ -85,10 +93,12 @@ toArray (BS fptr len) =
 -- is performed in constant time.
 {-# INLINE fromArray #-}
 fromArray :: Array Word8 -> ByteString
-fromArray Array {..}
+fromArray (Array {..})
     | aLen == 0 = mempty
     | otherwise = BS (makeForeignPtr arrContents arrStart) aLen
-  where
+
+    where
+
     aLen = arrEnd - arrStart
 
 -- | Unfold a strict ByteString to a stream of Word8.
