@@ -1,3 +1,4 @@
+{-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
 
 module Main where
@@ -14,7 +15,12 @@ import Test.Hspec.QuickCheck
 import Test.QuickCheck.Instances.ByteString ()
 
 -- Internal imports
+#if MIN_VERSION_streamly_core(0,2,0)
+import Streamly.Internal.Data.Array (Array(..))
+#else
 import Streamly.Internal.Data.Array.Type (Array(..))
+#endif
+
 
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL

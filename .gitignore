@@ -1,6 +1,22 @@
-.stack-work
-.ghc.environment.*
-cabal.project.local
-dist
-dist-newstyle
+# Build files/directories
+.stack-work/
+dist/
+dist-newstyle*/
+.cabal.nix
+autom4te.cache/
+benchmark/bench-report/bin/bench-report
+charts/
 stack.yaml.lock
+
+# Local GHC and Cabal related files
+.ghc.environment*
+cabal.project.local
+
+# Temp files created by Vim/Neovim
+*.swp
+*.swo
+*~
+
+# Other
+.log
+_doctests/
