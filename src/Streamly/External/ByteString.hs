@@ -38,12 +38,12 @@ import Streamly.Data.Unfold (Unfold, lmap)
 -- Internal imports
 import Data.ByteString.Internal (ByteString(..))
 import Streamly.Internal.Data.Array.Type (Array(..))
-import Streamly.Internal.Data.Unboxed (MutableByteArray(..))
+import Streamly.Internal.Data.Unbox (MutableByteArray(..))
 import Streamly.Internal.System.IO (unsafeInlineIO)
 
 import qualified Streamly.Data.Array as Array
 import qualified Streamly.Internal.Data.Unfold as Unfold (fold, mkUnfoldrM)
-import qualified Streamly.Internal.Data.Unboxed as Unboxed (nil)
+import qualified Streamly.Internal.Data.Unbox as Unboxed (nil)
 import qualified Streamly.Internal.Data.Stream.StreamD as StreamD (Step(Yield))
 
 import Prelude hiding (read)
