@@ -19,8 +19,8 @@ import Streamly.Data.Stream (Stream)
 
 -- Internal imports
 import Data.ByteString.Lazy.Internal (ByteString(..), chunk)
-import Streamly.Internal.Data.Stream.StreamD.Type (Step(..))
-import Streamly.Internal.Data.Unfold.Type (Unfold(..))
+import Streamly.Internal.Data.Stream (Step(..))
+import Streamly.Internal.Data.Unfold (Unfold(..))
 
 import qualified Streamly.External.ByteString as Strict
 import qualified Streamly.Data.Array as Array

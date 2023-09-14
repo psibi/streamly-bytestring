@@ -14,7 +14,7 @@ import Test.Hspec.QuickCheck
 import Test.QuickCheck.Instances.ByteString ()
 
 -- Internal imports
-import Streamly.Internal.Data.Array.Type (Array(..))
+import Streamly.Internal.Data.Array (Array(..))
 
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL

@@ -37,7 +37,7 @@ import Streamly.Data.Unfold (Unfold, lmap)
 
 -- Internal imports
 import Data.ByteString.Internal (ByteString(..))
-import Streamly.Internal.Data.Array.Type (Array(..))
+import Streamly.Internal.Data.Array (Array(..))
 import Streamly.Internal.Data.Unbox (MutableByteArray(..))
 import Streamly.Internal.System.IO (unsafeInlineIO)
 
