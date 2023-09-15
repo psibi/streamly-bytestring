@@ -57,7 +57,7 @@ jobs:
       # ------------------------------------------------------------------------
       CABAL_CHECK_RELAX: y
       CABAL_HACKAGE_MIRROR: "hackage.haskell.org:http://hackage.fpcomplete.com"
-      CABAL_PROJECT: "cabal.project.user"
+      # CABAL_PROJECT: "cabal.project.user"
       DISABLE_SDIST_BUILD: "y"
 
       # ------------------------------------------------------------------------
@@ -96,6 +96,8 @@ jobs:
             command: cabal-v2
             runner: ubuntu-latest
             cabal-version: 3.8.1.0
+            pack_options: >-
+              CABAL_PROJECT=cabal.project.user
 
           - name: 9.4.4
             ghc_version: 9.4.4
