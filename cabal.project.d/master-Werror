@@ -1,0 +1,10 @@
+packages: streamly-bytestring.cabal
+
+package streamly-bytestring
+  ghc-options: -Werror
+
+source-repository-package
+  type: git
+  location: https://github.com/composewell/streamly.git
+  tag: master
+  subdir: core
