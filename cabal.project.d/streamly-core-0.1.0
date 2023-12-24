@@ -1,0 +1,4 @@
+packages: streamly-bytestring.cabal
+
+constraints:
+    streamly-core == 0.1.0.*
