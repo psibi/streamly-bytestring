@@ -1,5 +1,9 @@
 # Changelog for streamly-bytestring
 
+## 0.2.1 (Dec 2023)
+
+* Support streamly-core-0.2.0
+
 ## 0.2.0 (Mar 2023)
 
 * Support streamly-core-0.1.0
