@@ -50,11 +50,17 @@ import qualified Streamly.Internal.Data.Stream as StreamD (Step(Yield))
 #else
 import Streamly.Internal.Data.Array.Type (Array(..))
 import Streamly.Internal.Data.Unboxed (MutableByteArray(..))
-import qualified Streamly.Internal.Data.Unboxed as Unboxed (nil)
+import qualified Streamly.Internal.Data.Unboxed as MutBA (nil)
 import qualified Streamly.Internal.Data.Stream.StreamD as StreamD (Step(Yield))
 #endif
 
 import Prelude hiding (read)
+
+#if MIN_VERSION_streamly_core(0,2,0)
+#define MUT_BYTE_ARRAY MutByteArray
+#else
+#define MUT_BYTE_ARRAY MutableByteArray
+#endif
 
 {-# INLINE mutableByteArrayContents# #-}
 mutableByteArrayContents# :: MutableByteArray# RealWorld -> Addr#
@@ -62,8 +68,8 @@ mutableByteArrayContents# marr# = byteArrayContents# (unsafeCoerce# marr#)
 
 -- | Helper function that creates a ForeignPtr
 {-# INLINE makeForeignPtr #-}
-makeForeignPtr :: MutByteArray -> Int -> ForeignPtr a
-makeForeignPtr (MutByteArray marr#) (I# off#) =
+makeForeignPtr :: MUT_BYTE_ARRAY -> Int -> ForeignPtr a
+makeForeignPtr (MUT_BYTE_ARRAY marr#) (I# off#) =
     ForeignPtr
         (mutableByteArrayContents# marr# `plusAddr#` off#)
         (PlainPtr marr#)
@@ -77,7 +83,7 @@ toArray (BS (ForeignPtr addr# _) _)
     | Ptr addr# == nullPtr = Array MutBA.nil 0 0
 toArray (BS (ForeignPtr addr# (PlainPtr marr#)) len) =
     let off = I# (addr# `minusAddr#` mutableByteArrayContents# marr#)
-     in Array (MutByteArray marr#) off (off + len)
+     in Array (MUT_BYTE_ARRAY marr#) off (off + len)
 toArray (BS fptr len) =
     unsafeInlineIO
         $ withForeignPtr fptr $ Unfold.fold (Array.writeN len) generator
