@@ -137,7 +137,7 @@ jobs:
             runner: ubuntu-latest
             cabal-version: 3.2
             pack_options: >-
-              CABAL_PROJECT=cabal.project.d/master-Werror
+              CABAL_PROJECT=cabal.project.d/bytestring-0.10.12
 
           - name: 8.10.7+stack
             command: stack
