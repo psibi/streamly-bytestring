@@ -29,7 +29,7 @@ import GHC.Exts
     , plusAddr#
     , unsafeCoerce#
     )
-import GHC.ForeignPtr (ForeignPtr(..), ForeignPtrContents(..))
+import GHC.ForeignPtr (ForeignPtr(..), ForeignPtrContents(..), plusForeignPtr)
 import GHC.Int (Int(..))
 import GHC.Ptr (Ptr(..), nullPtr, plusPtr)
 import Streamly.Data.Fold (Fold)
@@ -79,14 +79,15 @@ makeForeignPtr (MUT_BYTE_ARRAY marr#) (I# off#) =
 -- there is a copy involved.
 {-# INLINE toArray #-}
 toArray :: ByteString -> Array Word8
-toArray (BS (ForeignPtr addr# _) _)
+toArray (PS (ForeignPtr addr# _) _ _)
     | Ptr addr# == nullPtr = Array MutBA.nil 0 0
-toArray (BS (ForeignPtr addr# (PlainPtr marr#)) len) =
-    let off = I# (addr# `minusAddr#` mutableByteArrayContents# marr#)
+toArray (PS (ForeignPtr addr# (PlainPtr marr#)) off0 len) =
+    let off = I# (addr# `minusAddr#` mutableByteArrayContents# marr#) + off0
      in Array (MUT_BYTE_ARRAY marr#) off (off + len)
-toArray (BS fptr len) =
+toArray (PS fptr off len) =
     unsafeInlineIO
-        $ withForeignPtr fptr $ Unfold.fold (Array.writeN len) generator
+        $ withForeignPtr (fptr `plusForeignPtr` off)
+        $ Unfold.fold (Array.writeN len) generator
 
     where
 
@@ -101,7 +102,7 @@ toArray (BS fptr len) =
 fromArray :: Array Word8 -> ByteString
 fromArray (Array {..})
     | aLen == 0 = mempty
-    | otherwise = BS (makeForeignPtr arrContents arrStart) aLen
+    | otherwise = PS (makeForeignPtr arrContents arrStart) 0 aLen
 
     where
 
