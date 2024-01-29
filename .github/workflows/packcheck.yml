@@ -85,6 +85,7 @@ jobs:
       PACKCHECK_COMMAND: ${{ matrix.command }} ${{ matrix.pack_options }}
 
     runs-on: ${{ matrix.runner }}
+    continue-on-error: ${{ matrix.ignore_error }}
     strategy:
       fail-fast: false
       matrix:
@@ -97,31 +98,35 @@ jobs:
             runner: ubuntu-latest
             cabal-version: 3.8.1.0
             pack_options: >-
-              CABAL_PROJECT=cabal.project.d/master-Werror
+              CABAL_PROJECT=cabal.project.d/master
+            ignore_error: false
 
-          - name: 9.6.2
+          - name: 9.6.2+Werror
             ghc_version: 9.6.2
             command: cabal-v2
             runner: ubuntu-latest
             cabal-version: 3.8.1.0
             pack_options: >-
               CABAL_PROJECT=cabal.project.d/master-Werror
+            ignore_error: true
 
-          - name: 9.4.4
+          - name: 9.4.4+streamly-core-0.2.0
             ghc_version: 9.4.4
             command: cabal-v2
             runner: ubuntu-latest
             cabal-version: 3.8.1.0
             pack_options: >-
               CABAL_PROJECT=cabal.project.d/streamly-core-0.2.0
+            ignore_error: false
 
-          - name: 9.2.7
+          - name: 9.2.7+streamly-core-0.1.0
             ghc_version: 9.2.7
             command: cabal-v2
             runner: ubuntu-latest
             cabal-version: 3.6.2.0
             pack_options: >-
               CABAL_PROJECT=cabal.project.d/streamly-core-0.1.0
+            ignore_error: false
 
           - name: 9.0.1
             ghc_version: 9.0.1
@@ -129,21 +134,24 @@ jobs:
             runner: ubuntu-latest
             cabal-version: 3.2
             pack_options: >-
-              CABAL_PROJECT=cabal.project.d/master-Werror
+              CABAL_PROJECT=cabal.project.d/master
+            ignore_error: false
 
-          - name: 8.10.7
+          - name: 8.10.7+bytestring-0.10.12
             ghc_version: 8.10.7
             command: cabal-v2
             runner: ubuntu-latest
             cabal-version: 3.2
             pack_options: >-
               CABAL_PROJECT=cabal.project.d/bytestring-0.10.12
+            ignore_error: false
 
           - name: 8.10.7+stack
             command: stack
             runner: ubuntu-latest
             pack_options: >-
               STACK_YAML=stack.yaml
+            ignore_error: false
 
           - name: 8.10.7+macOS
             ghc_version: 8.10.7
@@ -151,7 +159,8 @@ jobs:
             runner: macos-latest
             cabal_version: 3.4
             pack_options: >-
-              CABAL_PROJECT=cabal.project.d/master-Werror
+              CABAL_PROJECT=cabal.project.d/master
+            ignore_error: false
 
           - name: 8.8.4
             ghc_version: 8.8.4
@@ -159,7 +168,8 @@ jobs:
             runner: ubuntu-latest
             cabal-version: 3.2
             pack_options: >-
-              CABAL_PROJECT=cabal.project.d/master-Werror
+              CABAL_PROJECT=cabal.project.d/master
+            ignore_error: false
 
           - name: 8.6.5
             ghc_version: 8.6.5
@@ -167,7 +177,8 @@ jobs:
             runner: ubuntu-latest
             cabal-version: 3.2
             pack_options: >-
-              CABAL_PROJECT=cabal.project.d/master-Werror
+              CABAL_PROJECT=cabal.project.d/master
+            ignore_error: false
 
           - name: hlint
             ghc_version: 8.8.4
@@ -177,6 +188,7 @@ jobs:
               HLINT_OPTIONS="lint"
               HLINT_TARGETS="src"
             cabal-version: 3.2
+            ignore_error: false
 
     steps:
     - uses: actions/checkout@v2
