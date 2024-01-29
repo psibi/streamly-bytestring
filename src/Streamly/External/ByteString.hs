@@ -29,7 +29,7 @@ import GHC.Exts
     , plusAddr#
     , unsafeCoerce#
     )
-import GHC.ForeignPtr (ForeignPtr(..), ForeignPtrContents(..), plusForeignPtr)
+import GHC.ForeignPtr (ForeignPtr(..), ForeignPtrContents(..))
 import GHC.Int (Int(..))
 import GHC.Ptr (Ptr(..), nullPtr, plusPtr)
 import Streamly.Data.Fold (Fold)
@@ -41,6 +41,10 @@ import Streamly.Internal.System.IO (unsafeInlineIO)
 
 import qualified Streamly.Data.Array as Array
 import qualified Streamly.Internal.Data.Unfold as Unfold (fold, mkUnfoldrM)
+
+#if !(MIN_VERSION_bytestring(0,11,0))
+import GHC.ForeignPtr (plusForeignPtr)
+#endif
 
 #if MIN_VERSION_streamly_core(0,2,0)
 import Streamly.Internal.Data.Array (Array(..))
@@ -62,6 +66,14 @@ import Prelude hiding (read)
 #define MUT_BYTE_ARRAY MutableByteArray
 #endif
 
+#if MIN_VERSION_bytestring(0,11,0)
+#define CONSTRUCTOR(a, b, c) BS a c
+#define WHEN_0_10_12(x)
+#else
+#define CONSTRUCTOR(a, b, c) PS a b c
+#define WHEN_0_10_12(x) x
+#endif
+
 {-# INLINE mutableByteArrayContents# #-}
 mutableByteArrayContents# :: MutableByteArray# RealWorld -> Addr#
 mutableByteArrayContents# marr# = byteArrayContents# (unsafeCoerce# marr#)
@@ -79,14 +91,15 @@ makeForeignPtr (MUT_BYTE_ARRAY marr#) (I# off#) =
 -- there is a copy involved.
 {-# INLINE toArray #-}
 toArray :: ByteString -> Array Word8
-toArray (PS (ForeignPtr addr# _) _ _)
+toArray (CONSTRUCTOR((ForeignPtr addr# _), _, _))
     | Ptr addr# == nullPtr = Array MutBA.nil 0 0
-toArray (PS (ForeignPtr addr# (PlainPtr marr#)) off0 len) =
-    let off = I# (addr# `minusAddr#` mutableByteArrayContents# marr#) + off0
+toArray (CONSTRUCTOR((ForeignPtr addr# (PlainPtr marr#)), off0, len)) =
+    let off = I# (addr# `minusAddr#` mutableByteArrayContents# marr#)
+                  WHEN_0_10_12(+ off0)
      in Array (MUT_BYTE_ARRAY marr#) off (off + len)
-toArray (PS fptr off len) =
+toArray (CONSTRUCTOR(fptr, off, len)) =
     unsafeInlineIO
-        $ withForeignPtr (fptr `plusForeignPtr` off)
+        $ withForeignPtr (fptr WHEN_0_10_12(`plusForeignPtr` off))
         $ Unfold.fold (Array.writeN len) generator
 
     where
@@ -102,7 +115,7 @@ toArray (PS fptr off len) =
 fromArray :: Array Word8 -> ByteString
 fromArray (Array {..})
     | aLen == 0 = mempty
-    | otherwise = PS (makeForeignPtr arrContents arrStart) 0 aLen
+    | otherwise = CONSTRUCTOR((makeForeignPtr arrContents arrStart), 0, aLen)
 
     where
 
