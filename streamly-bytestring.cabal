@@ -48,7 +48,7 @@ library
                  || == 0.11.4.*
                  || == 0.11.5.*
                  || == 0.12.0.*
-    , streamly-core >= 0.1.0 && < 0.2.2
+    , streamly-core >= 0.1.0 && < 0.2.3
   default-language: Haskell2010
 
 test-suite sb-test
