@@ -1,8 +1,12 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module Main where
 
+import Control.Monad (when)
+import System.Mem (performMajorGC)
+import Control.Concurrent (threadDelay)
 import Data.ByteString (ByteString)
 import Data.Word (Word8)
 import GHC.IO.Handle (Handle)
@@ -28,6 +32,7 @@ import qualified Streamly.External.ByteString as Strict
 import qualified Streamly.External.ByteString.Lazy as Lazy
 import qualified Streamly.Data.Stream as S
 import qualified Streamly.Data.Fold as Fold
+import qualified Streamly.Internal.Data.Array as Array
 
 streamToByteString :: Monad m => S.Stream m (Array Word8) -> m ByteString
 streamToByteString stream =
@@ -101,10 +106,28 @@ testFromChunksIOLaziness h = do
         S.fromList (Strict.toArray (BS.singleton h) : undefined)
     return $ BSL.head lbs
 
+checkPinnedNature :: IO ()
+checkPinnedNature = do
+    (arr :: Array Word8) <-
+        Array.fromStream (S.fromList (take 1000 (cycle [0..255])))
+    performMajorGC
+    threadDelay 50000
+    threadDelay 50000
+    performMajorGC
+    threadDelay 50000
+    threadDelay 50000
+    (_ :: Array Word8) <-
+        Array.fromStream (S.fromList (take 10000 (cycle [0..255])))
+    let bs = Strict.fromArray arr
+        lst1 = BS.unpack bs
+        lst2 = Array.toList arr
+    when (lst1 /= lst2) $ error "Pinned nature isn't ensured"
+
 main :: IO ()
 main =
     hspec $ do
         describe "Array tests" $ do
+            it "Pinned in nature" $ checkPinnedNature
             it "Strict fromArray" $
                 mapM_
                     (flip withSystemTempFile checkFileContent . show)
