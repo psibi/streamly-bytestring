@@ -37,6 +37,12 @@ import qualified Streamly.Data.Stream as Stream
 
 import Prelude hiding (read)
 
+#if MIN_VERSION_streamly_core(0,3,0)
+#define UNFOLD_EACH Unfold.unfoldEach
+#else
+#define UNFOLD_EACH Unfold.many
+#endif
+
 -- | Unfold a lazy ByteString to a stream of 'Array' 'Words'.
 {-# INLINE  chunkReader #-}
 chunkReader :: Monad m => Unfold m ByteString (Array Word8)
@@ -49,7 +55,7 @@ chunkReader = Unfold step seed
 -- | Unfold a lazy ByteString to a stream of Word8
 {-# INLINE reader #-}
 reader :: Monad m => Unfold m ByteString Word8
-reader = Unfold.many Array.reader readChunks
+reader = UNFOLD_EACH Array.reader readChunks
 
 -- TODO: "toChunks" should be called "read" instead
 -- | Convert a lazy 'ByteString' to a serial stream of 'Array' 'Word8'.

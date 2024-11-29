@@ -89,7 +89,11 @@ pinnedCreateOf :: MonadIO m => Int -> Fold m Word8 (Array Word8)
 {-# INLINE pinnedCreate #-}
 pinnedCreate :: MonadIO m => Fold m Word8 (Array Word8)
 
-#if MIN_VERSION_streamly_core(0,2,2)
+#if MIN_VERSION_streamly_core(0,2,3)
+ensurePinned = Array.pin
+pinnedCreateOf = Array.createOf'
+pinnedCreate = Array.create'
+#elif MIN_VERSION_streamly_core(0,2,2)
 ensurePinned = Array.pin
 pinnedCreateOf = Array.pinnedCreateOf
 pinnedCreate = Array.pinnedCreate
@@ -101,6 +105,12 @@ pinnedCreate = Array.pinnedWrite
 ensurePinned = pure
 pinnedCreateOf = Array.writeN
 pinnedCreate = Array.write
+#endif
+
+#if MIN_VERSION_streamly_core(0,3,0)
+#define CREATE_N Array.createOf
+#else
+#define CREATE_N Array.writeN
 #endif
 
 {-# INLINE mutableByteArrayContents# #-}
@@ -129,7 +139,7 @@ toArray (CONSTRUCTOR((ForeignPtr addr# (PlainPtr marr#)), off0, len)) =
 toArray (CONSTRUCTOR(fptr, off, len)) =
     unsafeInlineIO
         $ withForeignPtr (fptr WHEN_0_10_12(`plusForeignPtr` off))
-        $ Unfold.fold (Array.writeN len) generator
+        $ Unfold.fold (CREATE_N len) generator
 
     where
 
