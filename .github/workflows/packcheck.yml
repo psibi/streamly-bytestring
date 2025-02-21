@@ -91,6 +91,15 @@ jobs:
       matrix:
 
         include:
+          - name: 9.12.1+streamly-core-master-Werror
+            ghc_version: 9.12.1
+            command: cabal-v2
+            runner: ubuntu-latest
+            cabal-version: 3.8.1.0
+            pack_options: >-
+              CABAL_PROJECT=cabal.project.d/master-Werror
+              DISABLE_BENCH=y
+            ignore_error: false
 
           - name: 9.10.1+streamly-core-master-Werror
             ghc_version: 9.10.1
