@@ -89,7 +89,7 @@ pinnedCreateOf :: MonadIO m => Int -> Fold m Word8 (Array Word8)
 {-# INLINE pinnedCreate #-}
 pinnedCreate :: MonadIO m => Fold m Word8 (Array Word8)
 
-#if MIN_VERSION_streamly_core(0,2,3)
+#if MIN_VERSION_streamly_core(0,3,0)
 ensurePinned = Array.pin
 pinnedCreateOf = Array.createOf'
 pinnedCreate = Array.create'
