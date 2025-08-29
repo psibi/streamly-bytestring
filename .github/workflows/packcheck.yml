@@ -225,7 +225,7 @@ jobs:
       with:
         ghc-version: ${{ matrix.ghc_version }}
 
-    - uses: actions/cache@v2
+    - uses: actions/cache@v4
       name: Cache common directories
       with:
         path: |
