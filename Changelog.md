@@ -1,5 +1,9 @@
 # Changelog for streamly-bytestring
 
+## 0.2.3 (Sep 2025)
+
+* Support streamly-core-0.3.0
+
 ## 0.2.2 (Jul 2024)
 
 * Fix a bug that uses an unpinned array in the foreign pointer
