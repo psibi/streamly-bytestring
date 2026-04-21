@@ -1,5 +1,9 @@
 # Changelog for streamly-bytestring
 
+## 0.2.4 (Apr 2026)
+
+* Replace gauge with tasty-bench for benchmarks
+
 ## 0.2.3 (Sep 2025)
 
 * Support streamly-core-0.3.0
