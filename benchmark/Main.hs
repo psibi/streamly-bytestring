@@ -9,10 +9,10 @@ import qualified Streamly.Data.Fold as Fold
 import qualified Data.ByteString as BS
 import qualified Data.ByteString.Lazy as BSL
 
-import Control.DeepSeq (NFData(..))
+import Control.DeepSeq (NFData)
 import System.Random (randomRIO)
 
-import Gauge
+import Test.Tasty.Bench
 
 numElements :: Int
 numElements = 100000
