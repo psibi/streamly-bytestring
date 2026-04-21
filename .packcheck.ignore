@@ -3,3 +3,12 @@
 .gitignore
 stack.yaml
 appveyor.yml
+cabal.project.d/bytestring-0.10.12
+cabal.project.d/master
+cabal.project.d/master-Werror
+cabal.project.d/streamly-core-0.1.0
+cabal.project.d/streamly-core-0.2.0
+cabal.project.d/streamly-core-0.2.1
+cabal.project.d/streamly-core-0.2.2
+cabal.project.d/streamly-core-0.2.3
+cabal.project.d/streamly-core-0.3.0
